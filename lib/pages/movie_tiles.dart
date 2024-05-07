@@ -50,7 +50,7 @@ class MovieTiles extends StatelessWidget {
                                     child: Image(
                                       image: CachedNetworkImageProvider(
                                         snapshot.data == 'N/A'
-                                            ? 'https://ibb.co/QCXyWYS'
+                                            ? 'https://i.postimg.cc/zvn4QYBV/database-rules-zerostate.png'
                                             : snapshot.data!,
                                         maxHeight: (size.height * 0.2).toInt(),
                                       ),
@@ -98,14 +98,16 @@ class MovieTiles extends StatelessWidget {
             } else if (snapshot.hasError) {
               // return Scaffold(body: Text(snapshot.error.toString()));
               return const Scaffold(
-                body: Text(
-                  // snapshot.error.toString(),
-                  'Failed to load data!!',
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins'),
+                backgroundColor: Colors.black,
+                body: Center(
+                  child: Text(
+                    'Failed to load data!!\nPlease Refresh',
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins'),
+                  ),
                 ),
               );
             } else {

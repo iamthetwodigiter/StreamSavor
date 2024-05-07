@@ -87,6 +87,13 @@ class _MovieDetailsState extends State<MovieDetails> {
               }
               _saveFavorites();
               setState(() {});
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Added to Favorites ❤️', textAlign: TextAlign.center,),
+                
+                backgroundColor: Colors.black,),
+                
+              );
             },
           ),
         ],
@@ -356,7 +363,6 @@ class _MovieDetailsState extends State<MovieDetails> {
                       ],
                     ),
                   ),
-                  
                 ],
               );
             } else if (snapshot.hasError) {

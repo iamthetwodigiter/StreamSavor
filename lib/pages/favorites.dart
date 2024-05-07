@@ -234,13 +234,7 @@ class _FavoritesState extends State<Favorites> {
           BottomNavigationBarItem(
             icon: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomePage(),
-                    ),
-                  );
+                  Navigator.pop(context);
                 },
                 child: const Icon(Icons.home_rounded)),
             label: '',

@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
