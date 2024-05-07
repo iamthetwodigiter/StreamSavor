@@ -1,16 +1,25 @@
-# streamsavor
+# StreamSavor
 
-A new Flutter project.
+## Created with ❤️ using Flutter by [@iamthetwodigiter](https://www.github.com/iamthetwodigiter)
 
-## Getting Started
+## A movie streaming app for binge watchers like myself 😁
 
-This project is a starting point for a Flutter application.
+### Features:
 
-A few resources to get you started if this is your first Flutter project:
+* Latest Releases and Recently Added Movies are displayed on the homescreen
+* Realtime Movie Details are shown on tapping on the movie card
+* Available servers are listed for 1080p streaming
+* Movies can be added to Favorites and can be accessed from the Favorites tab
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Technicalities:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* Flutter - 3.19.6
+* Dart - 3.3.4
+* Hive - 2.2.3
+
+### Future Plans:
+
+* Subtitles Support
+* More streaming servers
+* Series Support
+* Anime Support
