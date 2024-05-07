@@ -19,6 +19,7 @@ class MovieDetails extends StatefulWidget {
 
 class _MovieDetailsState extends State<MovieDetails> {
   late Box<Movie> favoritesBox;
+  String name = '';
   Set<Movie> favoriteMovies = {};
 
   @override
@@ -96,6 +97,7 @@ class _MovieDetailsState extends State<MovieDetails> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               // String title = snapshot.data!.title;
+              name = snapshot.data!.title;
               return ListView(
                 children: [
                   Image(
@@ -354,6 +356,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                       ],
                     ),
                   ),
+                  
                 ],
               );
             } else if (snapshot.hasError) {

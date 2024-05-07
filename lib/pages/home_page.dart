@@ -84,10 +84,10 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Latest Launches',style: TextStyle(color: Colors.red, fontFamily: 'Poppins', fontSize: 25, fontWeight: FontWeight.bold),),
-            MovieTiles(endpoint: 'new/2'),
+            MovieTiles(endpoint: 'new',),
             SizedBox(height: 20),
             Text('Recently Added',style: TextStyle(color: Colors.red, fontFamily: 'Poppins', fontSize: 25, fontWeight: FontWeight.bold),),
-            MovieTiles(endpoint: 'add/3'),
+            MovieTiles(endpoint: 'add',),
           ],
         ),
       ),

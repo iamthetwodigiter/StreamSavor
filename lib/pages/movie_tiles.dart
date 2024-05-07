@@ -16,7 +16,7 @@ class MovieTiles extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: SizedBox(
-        height: size.height * 0.25,
+        height: size.height * 0.28,
         child: FutureBuilder<List<dynamic>>(
           future: newData(endpoint),
           builder: (context, snapshot) {
@@ -26,30 +26,32 @@ class MovieTiles extends StatelessWidget {
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   final movie = snapshot.data![index];
-                  return Container(
-                    width: size.width * 0.4,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                    ),
-                    child: InkWell(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Card(
-                            color: Colors.black,
-                            elevation: 1,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: FutureBuilder<String>(
-                                future: posterUrl(movie.imdbId),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    return Image(
+                  return FutureBuilder<String?>(
+                    future: posterUrl(snapshot.data?[index].imdbId),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        return Container(
+                          width: size.width * 0.4,
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5),
+                            ),
+                          ),
+                          child: InkWell(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Card(
+                                  color: Colors.black,
+                                  elevation: 1,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image(
                                       image: CachedNetworkImageProvider(
-                                        snapshot.data!,
+                                        snapshot.data == 'N/A'
+                                            ? 'https://ibb.co/QCXyWYS'
+                                            : snapshot.data!,
                                         maxHeight: (size.height * 0.2).toInt(),
                                       ),
                                       errorBuilder:
@@ -57,45 +59,39 @@ class MovieTiles extends StatelessWidget {
                                         return SizedBox(
                                           // height: size.height * 0.2,
                                           child: Image(
-                                            image: 
-                                             const AssetImage(
+                                            image: const AssetImage(
                                                 'assets/error.png'),
-                                                height: size.height * 0.15,
-                                                
-                                            
+                                            height: size.height * 0.15,
                                           ),
                                         );
                                       },
-                                    );
-                                  } else {
-                                    return const CircularProgressIndicator(
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  movie.title,
+                                  style: const TextStyle(
                                       color: Colors.red,
-                                    );
-                                  }
-                                },
-                              ),
+                                      fontSize: 12,
+                                      fontFamily: 'Poppins'),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            movie.title,
-                            style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 12,
-                                fontFamily: 'Poppins'),
-                          ),
-                        ],
-                      ),
-                      onTap: () async {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MovieDetails(
-                              id: movie.imdbId,
-                            ),
+                            onTap: () async {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MovieDetails(
+                                    id: movie.imdbId,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         );
-                      },
-                    ),
+                      }
+                      return const SizedBox(width: 0);
+                    },
                   );
                 },
               );
