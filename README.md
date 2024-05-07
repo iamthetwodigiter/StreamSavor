@@ -23,3 +23,4 @@
 * More streaming servers
 * Series Support
 * Anime Support
+* Download Support
