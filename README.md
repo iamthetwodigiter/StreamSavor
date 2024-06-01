@@ -19,8 +19,8 @@
 
 ### Future Plans:
 
-* Subtitles Support
+* ~Subtitles Support~ `Added`
 * More streaming servers
 * Series Support
 * Anime Support
-* Download Support
+* ~Download Support~ `Added`
