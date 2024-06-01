@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:streamsavor/data/movies_data.dart';
+import 'package:streamsavor/services/movies.dart';
+import 'package:streamsavor/services/downloader.dart';
 import 'package:streamsavor/pages/video_player.dart';
 import 'package:streamsavor/repository/movies.dart';
 import 'package:hive/hive.dart';
@@ -20,6 +21,7 @@ class MovieDetails extends StatefulWidget {
 class _MovieDetailsState extends State<MovieDetails> {
   late Box<Movie> favoritesBox;
   String name = '';
+  String downloadLink = '';
   Set<Movie> favoriteMovies = {};
 
   @override
@@ -89,10 +91,12 @@ class _MovieDetailsState extends State<MovieDetails> {
               setState(() {});
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Added to Favorites ❤️', textAlign: TextAlign.center,),
-                
-                backgroundColor: Colors.black,),
-                
+                  content: Text(
+                    'Added to Favorites ❤️',
+                    textAlign: TextAlign.center,
+                  ),
+                  backgroundColor: Colors.black,
+                ),
               );
             },
           ),
@@ -108,10 +112,10 @@ class _MovieDetailsState extends State<MovieDetails> {
               return ListView(
                 children: [
                   Image(
-                    image: CachedNetworkImageProvider(
-                        snapshot.data!.cover != 'N/A'
-                            ? snapshot.data!.cover
-                            : 'https://ibb.co/stHXfxc'),
+                    image: CachedNetworkImageProvider(snapshot.data!.cover !=
+                            'N/A'
+                        ? snapshot.data!.cover
+                        : 'https://www.gstatic.com/mobilesdk/180227_mobilesdk/storage_rules_zerostate.png'),
                     height: size.height * 0.268,
                     fit: BoxFit.fitWidth,
                     errorBuilder: (context, error, stackTrace) {
@@ -244,7 +248,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                         content: SizedBox(
                           width: 200,
                           height: 150,
-                          child: FutureBuilder<List<ServerData>>(
+                          child: FutureBuilder<ServerData>(
                             future: listServers(snapshot.data!.id),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -261,7 +265,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                               } else if (snapshot.hasError) {
                                 return const Text(
                                   // 'Error: ${snapshot.error}',
-                                  'Failed to load data!!!',
+                                  'Failed to load servers!!!',
                                   style: TextStyle(
                                     color: Colors.red,
                                     fontSize: 25,
@@ -270,57 +274,36 @@ class _MovieDetailsState extends State<MovieDetails> {
                                   ),
                                 );
                               } else {
-                                final servers = snapshot.data;
+                                final server = snapshot.data!;
                                 return ListView.builder(
-                                  itemCount: servers!.length,
+                                  itemCount: server.links.length,
                                   itemBuilder: (context, index) {
-                                    final server = servers[index];
+                                    final link = server.links;
                                     return Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         InkWell(
-                                          onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => server
-                                                          .stream ==
-                                                      null
-                                                  ? AlertDialog(
-                                                      backgroundColor:
-                                                          Colors.black,
-                                                      title: const Text(
-                                                        'BAD SERVER',
-                                                        style: TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              124,
-                                                              124,
-                                                              124),
-                                                          fontSize: 20,
-                                                          fontFamily: 'Poppins',
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () => {
-                                                            Navigator.pop(
-                                                                context)
-                                                          },
-                                                          child: const Text(
-                                                              'Close'),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : DefaultPlayer(
-                                                      videoUrl: server.stream!,
-                                                      subUrl: server.subtitle),
-                                            ),
-                                          ),
+                                          onTap: () {
+                                            int x =
+                                                server.stream!.lastIndexOf('/');
+                                            String url = server.stream!
+                                                    .substring(0, x + 1) +
+                                                link.values.elementAt(index);
+
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DefaultPlayer(
+                                                        videoUrl: url,
+                                                        subUrl:
+                                                            server.subtitle),
+                                              ),
+                                            );
+                                          },
                                           child: Text(
-                                            server.name.toUpperCase(),
+                                            link.keys.elementAt(index),
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -355,6 +338,54 @@ class _MovieDetailsState extends State<MovieDetails> {
                         ),
                         Text(
                           'Play',
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 15,
+                              fontFamily: 'Poppins'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Download $name Started',
+                            style: const TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Poppins'),
+                            textAlign: TextAlign.center,
+                          ),
+                          backgroundColor: Colors.black,
+                          duration: const Duration(milliseconds: 1500),
+                        ),
+                      );
+                      final temp = await listServers(widget.id);
+
+                      final link = await listStreams(temp.stream!);
+                      final downloadLink = temp.stream!
+                              .substring(0, temp.stream!.lastIndexOf('/') + 1) +
+                          link.values.elementAt(0);
+                      downloadFile(downloadLink, name, temp.subtitle,
+                          snapshot.data!.cover, temp.subtitle, context);
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.black),
+                      shadowColor: MaterialStateProperty.all(Colors.red),
+                      elevation: MaterialStateProperty.all(10),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.download_rounded,
+                          color: Colors.red,
+                          size: 30,
+                        ),
+                        Text(
+                          'Download',
                           style: TextStyle(
                               color: Colors.red,
                               fontSize: 15,

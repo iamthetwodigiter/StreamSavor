@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:streamsavor/pages/home_page.dart';
 import 'package:streamsavor/repository/movies.dart';
 
@@ -8,6 +9,7 @@ void main() async {
   Hive.registerAdapter(MovieAdapter());
   await Hive.openBox<Movie>('favorites');
   runApp(const MyApp());
+  await getExternalStorageDirectory();
 }
 
 class MyApp extends StatelessWidget {

@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:streamsavor/data/movies_data.dart';
-import 'package:streamsavor/pages/home_page.dart';
-import 'package:streamsavor/pages/movie_details.dart';
+import 'package:streamsavor/pages/downloads_page.dart';
+import 'package:streamsavor/services/movies.dart';
+import 'package:streamsavor/pages/movie_details_page.dart';
 import 'package:streamsavor/repository/movies.dart';
 
 class Favorites extends StatefulWidget {
@@ -20,7 +20,7 @@ class _FavoritesState extends State<Favorites> {
     List<String> titles = [];
     List<String> releaseDates = [];
     final size = MediaQuery.of(context).size;
-    int currentPage = 1;
+    int currentPage = 2;
     late Box<Movie> favoritesBox = Hive.box('favorites');
 
     if (favoritesBox.length == 0) {
@@ -80,12 +80,6 @@ class _FavoritesState extends State<Favorites> {
               icon: GestureDetector(
                   onTap: () {
                     Navigator.of(context).popUntil((route) => route.isFirst);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomePage(),
-                      ),
-                    );
                   },
                   child: const Icon(Icons.home_rounded)),
               label: '',
@@ -93,15 +87,19 @@ class _FavoritesState extends State<Favorites> {
             BottomNavigationBarItem(
               icon: GestureDetector(
                   onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const Favorites(),
+                        builder: (context) => const DownloadsPage(),
                       ),
                     );
                   },
-                  child: const Icon(Icons.favorite_rounded)),
+                  child: const Icon(Icons.download_rounded)),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              icon: GestureDetector(
+                  onTap: () {}, child: const Icon(Icons.favorite_rounded)),
               label: '',
             ),
           ],
@@ -234,7 +232,7 @@ class _FavoritesState extends State<Favorites> {
           BottomNavigationBarItem(
             icon: GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 child: const Icon(Icons.home_rounded)),
             label: '',
@@ -242,15 +240,19 @@ class _FavoritesState extends State<Favorites> {
           BottomNavigationBarItem(
             icon: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const Favorites(),
+                      builder: (context) => const DownloadsPage(),
                     ),
                   );
                 },
-                child: const Icon(Icons.favorite_rounded)),
+                child: const Icon(Icons.download_rounded)),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: GestureDetector(
+                onTap: () {}, child: const Icon(Icons.favorite_rounded)),
             label: '',
           ),
         ],

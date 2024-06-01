@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:streamsavor/pages/favorites.dart';
+import 'package:streamsavor/pages/downloads_page.dart';
+import 'package:streamsavor/pages/favorites_page.dart';
 import 'package:streamsavor/pages/movie_tiles.dart';
-import 'package:streamsavor/pages/search_results.dart';
+import 'package:streamsavor/pages/search_results_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -68,7 +69,8 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SearchResults(search: value),
+                        builder: (context) =>
+                            SearchResults(search: value.trimRight()),
                       ),
                     );
                   },
@@ -83,11 +85,27 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Latest Launches',style: TextStyle(color: Colors.red, fontFamily: 'Poppins', fontSize: 25, fontWeight: FontWeight.bold),),
-            MovieTiles(endpoint: 'new',),
+            Text(
+              'Latest Launches',
+              style: TextStyle(
+                color: Colors.red,
+                fontFamily: 'Poppins',
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            MovieTiles(endpoint: 'new'),
             SizedBox(height: 20),
-            Text('Recently Added',style: TextStyle(color: Colors.red, fontFamily: 'Poppins', fontSize: 25, fontWeight: FontWeight.bold),),
-            MovieTiles(endpoint: 'add',),
+            Text(
+              'Recently Added',
+              style: TextStyle(
+                color: Colors.red,
+                fontFamily: 'Poppins',
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            MovieTiles(endpoint: 'add'),
           ],
         ),
       ),
@@ -108,13 +126,8 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: GestureDetector(
                 onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomePage(),
-                    ),
-                  );
+                  
+                  const HomePage();
                 },
                 child: const Icon(Icons.home_rounded)),
             label: '',
@@ -122,7 +135,19 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: GestureDetector(
                 onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DownloadsPage(),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.download_rounded)),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: GestureDetector(
+                onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(

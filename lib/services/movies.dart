@@ -27,35 +27,59 @@ Future<MovieInfo> moviesInfo(String id) async {
   return movieInfo;
 }
 
-Future<List<ServerData>> listServers(String id) async {
+Future<ServerData> listServers(String id) async {
   final url = Uri.parse('');
   try {
     final response = await http.get(url);
     if (response.statusCode != 200) {
       throw Exception('Failed to load data: ${response.statusCode}');
     }
-    final data = jsonDecode(response.body);
-    final sources = data['sources'] as List;
-    final serverDataList = sources.map((source) {
-      final name = source['name'] as String;
-      final data = source['data'] as Map<String, dynamic>;
-      final stream = data['stream'] as String?;
+    final body = jsonDecode(response.body);
+    final sources = body['sources'] as List;
+    final serverData = sources.firstWhere(
+        (source) => source['name'] == 'Vidplay',
+        orElse: () => null);
+    if (serverData == null) throw Exception('No server data found');
+    final name = serverData['name'] as String;
+    final data = serverData['data'] as Map<String, dynamic>;
+    final stream = data['stream'] as String?;
+    String subtitle = 'none';
+    if (data['subtitle'].length != 0) {
       final subtitleData = (data['subtitle'] as List).firstWhere(
         (subtitle) => subtitle['lang'] == 'English',
-        orElse: () => null,
+        orElse: () => 'none',
       );
-      final subtitle = subtitleData?['file'];
-      return ServerData(name, stream, subtitle);
-    }).toList();
-    return serverDataList;
+      subtitle = subtitleData['file'];
+    }
+    final map = await listStreams(stream!);
+    return ServerData(name, stream, map, subtitle);
   } catch (e) {
-    return [];
+    rethrow;
+  }
+}
+
+Future<Map<String, String>> listStreams(String streamUrl) async {
+  Map<String, String> streams = {};
+  final res = await http.get(Uri.parse(streamUrl));
+  final data = res.body.split('\n');
+
+  try {
+    for (int i = 0; i < data.length - 1; i++) {
+      if (i % 2 != 0) {
+        final key = data[i].split('=').last;
+        final value = data[i + 1];
+        streams[key] = value;
+      }
+    }
+    return streams;
+  } catch (e) {
+    throw Exception(e.toString());
   }
 }
 
 Future<List<dynamic>> newData(String endpoint) async {
   List<dynamic> dataList = [];
-  
+
   for (int i = 1; i < 6; i++) {
     final response =
         await http.get(Uri.parse(''));

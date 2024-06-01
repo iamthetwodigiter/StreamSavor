@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:streamsavor/data/movies_data.dart';
-import 'package:streamsavor/pages/movie_details.dart';
+import 'package:streamsavor/services/movies.dart';
+import 'package:streamsavor/pages/movie_details_page.dart';
 import 'package:streamsavor/repository/movies.dart';
 
 class SearchResults extends StatefulWidget {
@@ -74,7 +74,7 @@ class _SearchResultsState extends State<SearchResults> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SearchResults(search: value),
+                        builder: (context) => SearchResults(search: value.trimRight()),
                       ),
                     );
                   },

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:streamsavor/data/movies_data.dart';
-import 'package:streamsavor/pages/movie_details.dart';
+import 'package:streamsavor/services/movies.dart';
+import 'package:streamsavor/pages/movie_details_page.dart';
 
 class MovieTiles extends StatelessWidget {
   final String endpoint;
@@ -16,7 +16,7 @@ class MovieTiles extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: SizedBox(
-        height: size.height * 0.28,
+        height: size.height * 0.3,
         child: FutureBuilder<List<dynamic>>(
           future: newData(endpoint),
           builder: (context, snapshot) {
@@ -52,7 +52,7 @@ class MovieTiles extends StatelessWidget {
                                         snapshot.data == 'N/A'
                                             ? 'https://i.postimg.cc/zvn4QYBV/database-rules-zerostate.png'
                                             : snapshot.data!,
-                                        maxHeight: (size.height * 0.2).toInt(),
+                                        maxHeight: (size.height * 0.23).toInt(),
                                       ),
                                       errorBuilder:
                                           (context, error, stackTrace) {
@@ -73,7 +73,9 @@ class MovieTiles extends StatelessWidget {
                                   style: const TextStyle(
                                       color: Colors.red,
                                       fontSize: 12,
-                                      fontFamily: 'Poppins'),
+                                      fontFamily: 'Poppins',
+                                      overflow: TextOverflow.fade),
+                                      maxLines: 2,
                                 ),
                               ],
                             ),
@@ -101,7 +103,7 @@ class MovieTiles extends StatelessWidget {
                 backgroundColor: Colors.black,
                 body: Center(
                   child: Text(
-                    'Failed to load data!!\nPlease Refresh',
+                    'Failed to load data!!\nPlease click on Home icon to Refresh',
                     style: TextStyle(
                         color: Colors.red,
                         fontSize: 15,

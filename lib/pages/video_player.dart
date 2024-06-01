@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -7,6 +8,7 @@ import 'package:http/http.dart' as http;
 class DefaultPlayer extends StatefulWidget {
   final String subUrl;
   final String videoUrl;
+
   const DefaultPlayer({
     super.key,
     required this.subUrl,
@@ -24,22 +26,31 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
   void initState() {
     super.initState();
     flickManager = FlickManager(
-      videoPlayerController: VideoPlayerController.networkUrl(
-        Uri.parse(widget.videoUrl),
+      videoPlayerController: videoPlayer(),
+    );
+  }
+
+  VideoPlayerController videoPlayer() {
+    if (widget.videoUrl.contains('storage')) {
+      return VideoPlayerController.file(
+        File(widget.videoUrl),
         closedCaptionFile: _loadCaptions(),
-      ),
+      );
+    }
+    return VideoPlayerController.networkUrl(
+      Uri.parse(widget.videoUrl),
+      closedCaptionFile: _loadCaptions(),
     );
   }
 
   Future<ClosedCaptionFile> _loadCaptions() async {
-    final url = Uri.parse(widget.subUrl);
-    try {
+    if (widget.subUrl != 'none') {
+      final url = Uri.parse(widget.subUrl);
       final data = await http.get(url);
       final srtContent = data.body.toString();
-      return SubRipCaptionFile(srtContent);
-    } catch (e) {
-      return SubRipCaptionFile('');
+      return WebVTTCaptionFile(srtContent);
     }
+    return WebVTTCaptionFile('');
   }
 
   @override
@@ -63,9 +74,22 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
         child: FlickVideoPlayer(
           flickManager: flickManager,
           flickVideoWithControls: const FlickVideoWithControls(
-            closedCaptionTextStyle: TextStyle(fontSize: 8),
+            closedCaptionTextStyle: TextStyle(fontSize: 12),
             controls: FlickPortraitControls(),
             videoFit: BoxFit.fitWidth,
+            playerErrorFallback: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error, color: Colors.red, size: 32),
+                  SizedBox(width: 10),
+                  Text(
+                    'Error Loading!!!',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
           ),
           flickVideoWithControlsFullscreen: const FlickVideoWithControls(
             controls: FlickLandscapeControls(),

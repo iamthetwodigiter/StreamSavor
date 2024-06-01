@@ -78,11 +78,13 @@ class MovieInfo {
 class ServerData {
   final String name;
   final String? stream;
+  final Map<String, String> links;
   final String subtitle;
 
   ServerData(
     this.name,
     this.stream,
+    this.links,
     this.subtitle,
   );
 }
