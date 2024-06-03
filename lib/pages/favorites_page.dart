@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:streamsavor/pages/downloads_page.dart';
+import 'package:streamsavor/pages/animes/anime_details.dart';
+import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/services/movies.dart';
-import 'package:streamsavor/pages/movie_details_page.dart';
-import 'package:streamsavor/repository/movies.dart';
+import 'package:streamsavor/pages/movies/movie_details_page.dart';
+import 'package:streamsavor/repository/movies_repository.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
@@ -20,10 +23,10 @@ class _FavoritesState extends State<Favorites> {
     List<String> titles = [];
     List<String> releaseDates = [];
     final size = MediaQuery.of(context).size;
-    int currentPage = 2;
-    late Box<Movie> favoritesBox = Hive.box('favorites');
+    late Box<Movie> favoritesBox = Hive.box('movies-fav');
+    late Box<AnimeCards> animeBox = Hive.box('anime-fav');
 
-    if (favoritesBox.length == 0) {
+    if (favoritesBox.length == 0 && animeBox.length == 0) {
       return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -33,13 +36,13 @@ class _FavoritesState extends State<Favorites> {
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: const Text(
+                  child: Text(
                     'Favorites',
                     style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins'),
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -47,60 +50,17 @@ class _FavoritesState extends State<Favorites> {
           ),
           backgroundColor: Colors.black,
         ),
-        body: const Column(
+        body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
               child: Text(
                 'No Favorites Added!!',
                 style: TextStyle(
-                    color: Colors.red,
+                    color: Theme.of(context).primaryColor,
                     fontSize: 25,
-                    fontFamily: 'Poppins',
                     fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.black,
-          selectedIconTheme: const IconThemeData(color: Colors.red),
-          unselectedIconTheme: const IconThemeData(color: Colors.grey),
-          iconSize: 30,
-          selectedFontSize: 0,
-          unselectedFontSize: 0,
-          onTap: (value) {
-            setState(() {
-              currentPage = value;
-            });
-          },
-          currentIndex: currentPage,
-          items: [
-            BottomNavigationBarItem(
-              icon: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                  child: const Icon(Icons.home_rounded)),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DownloadsPage(),
-                      ),
-                    );
-                  },
-                  child: const Icon(Icons.download_rounded)),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: GestureDetector(
-                  onTap: () {}, child: const Icon(Icons.favorite_rounded)),
-              label: '',
             ),
           ],
         ),
@@ -116,13 +76,13 @@ class _FavoritesState extends State<Favorites> {
             Expanded(
               child: Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: const Text(
+                child: Text(
                   'Favorites',
                   style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins'),
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -130,132 +90,169 @@ class _FavoritesState extends State<Favorites> {
         ),
         backgroundColor: Colors.black,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: SizedBox(
-          height: size.height * 0.35,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: favoritesBox.length,
-            itemBuilder: (context, index) {
-              return Container(
-                width: size.width * 0.4,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    InkWell(
-                      child: FutureBuilder(
-                        future:
-                            moviesInfo(favoritesBox.values.elementAt(index).id),
-                        builder: (context, snapshot) {
-                          titles
-                              .add(favoritesBox.values.elementAt(index).title);
-                          releaseDates.add(favoritesBox.values
-                              .elementAt(index)
-                              .releaseDate!);
-                          if (snapshot.hasData) {
-                            return Container(
-                              width: size.width * 0.4,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5),
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Card(
-                                    color: Colors.black,
-                                    elevation: 1,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: CachedNetworkImage(
-                                          imageUrl: snapshot.data!.cover),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              'Movies',
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.35,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: favoritesBox.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: size.width * 0.4,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        InkWell(
+                          child: FutureBuilder(
+                            future: moviesInfo(
+                                favoritesBox.values.elementAt(index).id),
+                            builder: (context, snapshot) {
+                              titles.add(
+                                  favoritesBox.values.elementAt(index).title);
+                              releaseDates.add(favoritesBox.values
+                                  .elementAt(index)
+                                  .releaseDate!);
+                              if (snapshot.hasData) {
+                                return Container(
+                                  width: size.width * 0.4,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(5),
                                     ),
                                   ),
-                                  Text(
-                                    favoritesBox.values.elementAt(index).title,
-                                    style: const TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 12,
-                                        fontFamily: 'Poppins'),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Card(
+                                        color: Colors.black,
+                                        elevation: 1,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: CachedNetworkImage(
+                                              imageUrl: snapshot.data!.cover),
+                                        ),
+                                      ),
+                                      Text(
+                                        favoritesBox.values
+                                            .elementAt(index)
+                                            .title,
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                );
+                              } else {
+                                return CircularProgressIndicator(
+                                    color: Theme.of(context).primaryColor);
+                              }
+                            },
+                          ),
+                          onTap: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MovieDetails(
+                                  id: favoritesBox.values.elementAt(index).id,
+                                ),
                               ),
                             );
-                          } else {
-                            return const CircularProgressIndicator(
-                                color: Colors.red);
-                          }
-                        },
-                      ),
-                      onTap: () async {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MovieDetails(
-                              id: favoritesBox.values.elementAt(index).id,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedIconTheme: const IconThemeData(color: Colors.red),
-        unselectedIconTheme: const IconThemeData(color: Colors.grey),
-        iconSize: 30,
-        selectedFontSize: 0,
-        unselectedFontSize: 0,
-        onTap: (value) {
-          setState(() {
-            currentPage = value;
-          });
-        },
-        currentIndex: currentPage,
-        items: [
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-                child: const Icon(Icons.home_rounded)),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DownloadsPage(),
+                          },
+                        ),
+                      ],
                     ),
                   );
                 },
-                child: const Icon(Icons.download_rounded)),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {}, child: const Icon(Icons.favorite_rounded)),
-            label: '',
-          ),
-        ],
+              ),
+            ),
+            Text(
+              'Anime',
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: size.height * 0.32,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: animeBox.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: size.width * 0.375,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        InkWell(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CachedNetworkImage(
+                                imageUrl:
+                                    animeBox.values.elementAt(index).poster,
+                              ),
+                              Text(
+                                animeBox.values.elementAt(index).name,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 12,
+                                    overflow: TextOverflow.fade),
+                                softWrap: true,
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                          onTap: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AnimeDetails(
+                                  id: animeBox.values.elementAt(index).id,
+                                  name: animeBox.values.elementAt(index).name,
+                                  poster:
+                                      animeBox.values.elementAt(index).poster,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

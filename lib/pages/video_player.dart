@@ -73,17 +73,17 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
       child: SizedBox(
         child: FlickVideoPlayer(
           flickManager: flickManager,
-          flickVideoWithControls: const FlickVideoWithControls(
-            closedCaptionTextStyle: TextStyle(fontSize: 12),
-            controls: FlickPortraitControls(),
+          flickVideoWithControls: FlickVideoWithControls(
+            closedCaptionTextStyle: const TextStyle(fontSize: 15),
+            controls: const FlickPortraitControls(),
             videoFit: BoxFit.fitWidth,
             playerErrorFallback: Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.error, color: Colors.red, size: 32),
-                  SizedBox(width: 10),
-                  Text(
+                  Icon(Icons.error, color: Theme.of(context).primaryColor, size: 32),
+                  const SizedBox(width: 10),
+                  const Text(
                     'Error Loading!!!',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),

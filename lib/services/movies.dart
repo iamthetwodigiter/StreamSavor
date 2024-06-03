@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:streamsavor/repository/movies.dart';
+import 'package:streamsavor/repository/movies_repository.dart';
 
 // Urls have been removed to prevent API misuse, since usage is limited [unless you choose to sponsor this project...]
 Future<List<Movie>> searchMovies(String search) async {

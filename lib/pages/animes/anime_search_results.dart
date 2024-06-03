@@ -1,26 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:streamsavor/services/movies.dart';
-import 'package:streamsavor/pages/movie_details_page.dart';
-import 'package:streamsavor/repository/movies.dart';
+import 'package:streamsavor/pages/animes/anime_details.dart';
+import 'package:streamsavor/repository/anime_repository.dart';
+import 'package:streamsavor/services/animes.dart';
 
-class SearchResults extends StatefulWidget {
+class AnimeSearchResult extends StatefulWidget {
   final String search;
-  const SearchResults({
-    super.key,
-    required this.search,
-  });
+  const AnimeSearchResult({super.key, required this.search});
 
   @override
-  State<SearchResults> createState() => _SearchResultsState();
+  State<AnimeSearchResult> createState() => _AnimeSearchResultState();
 }
 
-class _SearchResultsState extends State<SearchResults> {
+class _AnimeSearchResultState extends State<AnimeSearchResult> {
   final TextEditingController _searchController = TextEditingController();
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,33 +33,33 @@ class _SearchResultsState extends State<SearchResults> {
                   style: const TextStyle(
                     color: Colors.white,
                   ),
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     focusColor: Colors.white,
                     hintText: 'Search',
                     hintStyle:
-                        TextStyle(color: Colors.white, fontFamily: 'Poppins'),
-                    contentPadding: EdgeInsets.all(5),
+                        const TextStyle(color: Colors.white),
+                    contentPadding: const EdgeInsets.all(5),
                     prefixIcon: Icon(
                       Icons.search,
-                      color: Colors.red,
+                      color: Theme.of(context).primaryColor,
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(15),
                       ),
-                      borderSide: BorderSide(width: 0.25, color: Colors.red),
+                      borderSide: BorderSide(width: 0.25, color: Theme.of(context).primaryColor),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(15),
                       ),
-                      borderSide: BorderSide(width: 0.25, color: Colors.red),
+                      borderSide: BorderSide(width: 0.25, color: Theme.of(context).primaryColor),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(15),
                       ),
-                      borderSide: BorderSide(width: 0.25, color: Colors.red),
+                      borderSide: BorderSide(width: 0.25, color: Theme.of(context).primaryColor),
                     ),
                   ),
                   onSubmitted: (value) async {
@@ -74,7 +67,7 @@ class _SearchResultsState extends State<SearchResults> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SearchResults(search: value.trimRight()),
+                        builder: (context) => AnimeSearchResult(search: value.trimRight()),
                       ),
                     );
                   },
@@ -92,16 +85,16 @@ class _SearchResultsState extends State<SearchResults> {
             child: SizedBox(
               height: size.height * 0.35,
               child: SafeArea(
-                child: FutureBuilder<List<Movie>>(
-                  future: searchMovies(widget.search),
+                child: FutureBuilder<List<SearchAnime>>(
+                  future: searchAnime(widget.search),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      final movies = snapshot.data ?? [];
+                      final animes = snapshot.data ?? [];
                       return ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: movies.length,
+                        itemCount: animes.length,
                         itemBuilder: (context, index) {
-                          final movie = movies[index];
+                          final anime = animes[index];
                           return Container(
                             width: size.width * 0.4,
                             margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -122,7 +115,7 @@ class _SearchResultsState extends State<SearchResults> {
                                       borderRadius: BorderRadius.circular(10),
                                       child: Image(
                                         image: CachedNetworkImageProvider(
-                                          movie.thumb!,
+                                          anime.poster,
                                           maxHeight:
                                               (size.height * 0.25).toInt(),
                                         ),
@@ -139,11 +132,13 @@ class _SearchResultsState extends State<SearchResults> {
                                     ),
                                   ),
                                   Text(
-                                    movie.title,
-                                    style: const TextStyle(
-                                        color: Colors.red,
+                                    anime.name,
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
                                         fontSize: 12,
-                                        fontFamily: 'Poppins'),
+                                        overflow: TextOverflow.fade
+                                        ),
+                                        maxLines: 3,
                                   ),
                                 ],
                               ),
@@ -151,8 +146,10 @@ class _SearchResultsState extends State<SearchResults> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => MovieDetails(
-                                      id: movie.id,
+                                    builder: (context) => AnimeDetails(
+                                      id: anime.id,
+                                      name: anime.name,
+                                      poster: anime.poster,
                                     ),
                                   ),
                                 );
@@ -162,23 +159,23 @@ class _SearchResultsState extends State<SearchResults> {
                         },
                       );
                     } else if (snapshot.hasError) {
-                      return const Scaffold(
+                      return Scaffold(
                         backgroundColor: Colors.black,
                         body: Center(
                           child: Text(
                             'No Search Result Found',
                             style: TextStyle(
-                                color: Colors.red,
+                                color: Theme.of(context).primaryColor,
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold,
-                                fontFamily: 'Poppins'),
+                                ),
                           ),
                         ),
                       );
                     } else {
-                      return const Center(
+                      return Center(
                         child: CircularProgressIndicator(
-                          color: Colors.red,
+                          color: Theme.of(context).primaryColor,
                         ),
                       );
                     }

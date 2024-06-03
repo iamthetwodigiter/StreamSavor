@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-part 'movies.g.dart';
+part 'movies_repository.g.dart';
 
 @HiveType(typeId: 0)
 class Movie {

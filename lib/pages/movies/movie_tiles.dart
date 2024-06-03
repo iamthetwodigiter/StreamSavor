@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:streamsavor/services/movies.dart';
-import 'package:streamsavor/pages/movie_details_page.dart';
+import 'package:streamsavor/pages/movies/movie_details_page.dart';
 
 class MovieTiles extends StatelessWidget {
   final String endpoint;
@@ -16,7 +16,7 @@ class MovieTiles extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: SizedBox(
-        height: size.height * 0.3,
+        height: size.height * 0.32,
         child: FutureBuilder<List<dynamic>>(
           future: newData(endpoint),
           builder: (context, snapshot) {
@@ -32,7 +32,7 @@ class MovieTiles extends StatelessWidget {
                       if (snapshot.hasData && snapshot.data != null) {
                         return Container(
                           width: size.width * 0.4,
-                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          margin: const EdgeInsets.symmetric(horizontal: 5),
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(
                               Radius.circular(5),
@@ -71,11 +71,11 @@ class MovieTiles extends StatelessWidget {
                                 Text(
                                   movie.title,
                                   style: const TextStyle(
-                                      color: Colors.red,
+                                      // color: Theme.of(context).primaryColor,
+                                      color: Color.fromARGB(255, 189, 213, 255),
                                       fontSize: 12,
-                                      fontFamily: 'Poppins',
                                       overflow: TextOverflow.fade),
-                                      maxLines: 2,
+                                  maxLines: 2,
                                 ),
                               ],
                             ),
@@ -99,21 +99,21 @@ class MovieTiles extends StatelessWidget {
               );
             } else if (snapshot.hasError) {
               // return Scaffold(body: Text(snapshot.error.toString()));
-              return const Scaffold(
+              return Scaffold(
                 backgroundColor: Colors.black,
                 body: Center(
                   child: Text(
                     'Failed to load data!!\nPlease click on Home icon to Refresh',
                     style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins'),
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               );
             } else {
-              return const Scaffold(
+              return Scaffold(
                 backgroundColor: Colors.black,
                 body: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -122,7 +122,7 @@ class MovieTiles extends StatelessWidget {
                       child: Text(
                         'Loading....',
                         style: TextStyle(
-                          color: Colors.red,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                     ),

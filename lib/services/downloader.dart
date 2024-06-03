@@ -24,10 +24,10 @@ Future<void> downloadFile(String url, String name, String vttUrl, String cover, 
       SnackBar(
         content: Text(
           'Download $name completed',
-          style: const TextStyle(
-              color: Colors.red,
+          style: TextStyle(
+              color: Theme.of(context).primaryColor,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins'),
+              ),
           textAlign: TextAlign.center,
         ),
         backgroundColor: Colors.black,

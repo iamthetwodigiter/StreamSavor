@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:streamsavor/services/movies.dart';
 import 'package:streamsavor/services/downloader.dart';
 import 'package:streamsavor/pages/video_player.dart';
-import 'package:streamsavor/repository/movies.dart';
+import 'package:streamsavor/repository/movies_repository.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -31,7 +31,7 @@ class _MovieDetailsState extends State<MovieDetails> {
   }
 
   Future<void> _loadFavorites() async {
-    favoritesBox = Hive.box('favorites');
+    favoritesBox = Hive.box('movies-fav');
     setState(() {
       favoriteMovies = favoritesBox.values.toSet();
     });
@@ -53,20 +53,20 @@ class _MovieDetailsState extends State<MovieDetails> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    // if (Hive.isBoxOpen('favorites')) {
-    //   print('The favorites box is open');
+    // if (Hive.isBoxOpen('movies-fav')) {
+    //   print('The movies-fav box is open');
     //   favoritesBox.close();
     //   favoritesBox.deleteFromDisk();
     //   print("Box deleted");
     // } else {
-    //   print('The favorites box is not open');
+    //   print('The movies-fav box is not open');
     // }
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
-          color: Colors.red,
+          color: Theme.of(context).primaryColor,
           onPressed: () => {Navigator.pop(context)},
         ),
         actions: [
@@ -75,7 +75,7 @@ class _MovieDetailsState extends State<MovieDetails> {
               favoriteMovies.any((movie) => movie.id == widget.id)
                   ? Icons.favorite
                   : Icons.favorite_border,
-              color: Colors.red,
+              color: Theme.of(context).primaryColor,
             ),
             onPressed: () async {
               final res = await moviesInfo(widget.id);
@@ -128,18 +128,14 @@ class _MovieDetailsState extends State<MovieDetails> {
                   const SizedBox(height: 15),
                   Text(
                     snapshot.data!.title,
-                    style: const TextStyle(
-                        color: Colors.red,
-                        fontFamily: 'Poppins',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
                     snapshot.data!.description,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
-                        fontSize: 12),
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
                   ),
                   RichText(
                     text: TextSpan(
@@ -154,9 +150,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                         TextSpan(
                           text: snapshot.data!.releaseDate,
                           style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                              fontSize: 12),
+                              color: Colors.white, fontSize: 12),
                         ),
                         const TextSpan(
                           text: '\nRatings:  ',
@@ -164,9 +158,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                         TextSpan(
                           text: '${snapshot.data!.ratings} ⭐',
                           style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                              fontSize: 12),
+                              color: Colors.white, fontSize: 12),
                         ),
                         const TextSpan(
                           text: '\nDuration:  ',
@@ -174,9 +166,7 @@ class _MovieDetailsState extends State<MovieDetails> {
                         TextSpan(
                           text: snapshot.data!.duration,
                           style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Poppins',
-                              fontSize: 12),
+                              color: Colors.white, fontSize: 12),
                         ),
                         const TextSpan(
                           text: '\nGenres:  ',
@@ -185,7 +175,6 @@ class _MovieDetailsState extends State<MovieDetails> {
                           text: snapshot.data!.genres,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontFamily: 'Poppins',
                             fontSize: 12,
                           ),
                         ),
@@ -196,7 +185,6 @@ class _MovieDetailsState extends State<MovieDetails> {
                           text: snapshot.data!.casts,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontFamily: 'Poppins',
                             fontSize: 12,
                           ),
                         ),
@@ -207,7 +195,6 @@ class _MovieDetailsState extends State<MovieDetails> {
                           text: snapshot.data!.director,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontFamily: 'Poppins',
                             fontSize: 12,
                           ),
                         ),
@@ -218,7 +205,6 @@ class _MovieDetailsState extends State<MovieDetails> {
                           text: snapshot.data!.writer,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontFamily: 'Poppins',
                             fontSize: 12,
                           ),
                         ),
@@ -236,14 +222,12 @@ class _MovieDetailsState extends State<MovieDetails> {
                           style: TextStyle(
                             color: Color.fromARGB(255, 124, 124, 124),
                             fontSize: 20,
-                            fontFamily: 'Poppins',
                           ),
                           textAlign: TextAlign.center,
                         ),
                         contentTextStyle: const TextStyle(
                           color: Colors.blue,
                           fontSize: 18,
-                          fontFamily: 'Poppins',
                         ),
                         content: SizedBox(
                           width: 200,
@@ -253,23 +237,22 @@ class _MovieDetailsState extends State<MovieDetails> {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return const Center(
+                                return Center(
                                   child: SizedBox(
                                     height: 50,
                                     width: 50,
                                     child: CircularProgressIndicator(
-                                      color: Colors.red,
+                                      color: Theme.of(context).primaryColor,
                                     ),
                                   ),
                                 );
                               } else if (snapshot.hasError) {
-                                return const Text(
+                                return Text(
                                   // 'Error: ${snapshot.error}',
                                   'Failed to load servers!!!',
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: Theme.of(context).primaryColor,
                                     fontSize: 25,
-                                    fontFamily: 'Poppins',
                                     fontWeight: FontWeight.bold,
                                   ),
                                 );
@@ -325,23 +308,24 @@ class _MovieDetailsState extends State<MovieDetails> {
                     ),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.black),
-                      shadowColor: MaterialStateProperty.all(Colors.red),
+                      shadowColor: MaterialStateProperty.all(
+                          Theme.of(context).primaryColor),
                       elevation: MaterialStateProperty.all(10),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.play_arrow_rounded,
-                          color: Colors.red,
+                          color: Theme.of(context).primaryColor,
                           size: 30,
                         ),
                         Text(
                           'Play',
                           style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 15,
-                              fontFamily: 'Poppins'),
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 15,
+                          ),
                         ),
                       ],
                     ),
@@ -352,10 +336,10 @@ class _MovieDetailsState extends State<MovieDetails> {
                         SnackBar(
                           content: Text(
                             'Download $name Started',
-                            style: const TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Poppins'),
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           backgroundColor: Colors.black,
@@ -373,23 +357,24 @@ class _MovieDetailsState extends State<MovieDetails> {
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.black),
-                      shadowColor: MaterialStateProperty.all(Colors.red),
+                      shadowColor: MaterialStateProperty.all(
+                          Theme.of(context).primaryColor),
                       elevation: MaterialStateProperty.all(10),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           Icons.download_rounded,
-                          color: Colors.red,
+                          color: Theme.of(context).primaryColor,
                           size: 30,
                         ),
                         Text(
                           'Download',
                           style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 15,
-                              fontFamily: 'Poppins'),
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 15,
+                          ),
                         ),
                       ],
                     ),
@@ -397,18 +382,18 @@ class _MovieDetailsState extends State<MovieDetails> {
                 ],
               );
             } else if (snapshot.hasError) {
-              return const Text(
+              return Text(
                 // snapshot.error.toString(),
                 'Failed to load data!!',
                 style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins'),
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               );
             } else {
-              return const CircularProgressIndicator(
-                color: Colors.red,
+              return CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
               );
             }
           },

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:streamsavor/pages/favorites_page.dart';
 import 'package:streamsavor/pages/video_player.dart';
 
 class DownloadsPage extends StatefulWidget {
@@ -9,18 +8,17 @@ class DownloadsPage extends StatefulWidget {
 
   @override
   State<DownloadsPage> createState() => _DownloadsPageState();
-  
 }
 
 class _DownloadsPageState extends State<DownloadsPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    int currentPage = 1;
 
     List<Directory> getDirectory() {
       late List<Directory> dirs = [];
-      final appStorage = Directory('/storage/emulated/0/Android/data/com.thetwodigiter.streamsavor/files/');
+      final appStorage = Directory(
+          '/storage/emulated/0/Android/data/com.thetwodigiter.streamsavor/files/');
       List<FileSystemEntity> files = appStorage.listSync(recursive: true);
       for (FileSystemEntity file in files) {
         if (file.toString().contains('Directory: ') &&
@@ -41,13 +39,13 @@ class _DownloadsPageState extends State<DownloadsPage> {
             Expanded(
               child: Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: const Text(
+                child: Text(
                   'Downloads',
                   style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Poppins'),
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -91,9 +89,8 @@ class _DownloadsPageState extends State<DownloadsPage> {
                             children: [
                               Text(
                                 name,
-                                style: const TextStyle(
-                                  color: Colors.red,
-                                  fontFamily: 'Poppins',
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 25,
                                 ),
@@ -114,30 +111,31 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                       );
                                     },
                                     style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.black),
-                                        shadowColor: MaterialStateProperty.all(
-                                            Colors.red),
-                                        elevation: MaterialStateProperty.all(5),
-                                        fixedSize:
-                                            const MaterialStatePropertyAll(
-                                                Size(60, 15))),
-                                    child: const Row(
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.black),
+                                      shadowColor: MaterialStateProperty.all(
+                                          Theme.of(context).primaryColor),
+                                      elevation: MaterialStateProperty.all(5),
+                                      fixedSize: const MaterialStatePropertyAll(
+                                        Size(60, 15),
+                                      ),
+                                    ),
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.play_arrow_rounded,
-                                          color: Colors.red,
+                                          color: Theme.of(context).primaryColor,
                                           size: 15,
                                         ),
                                         // Text(
                                         //   'Play',
                                         //   style: TextStyle(
-                                        //       color: Colors.red,
+                                        //       color: Theme.of(context).primaryColor,
                                         //       fontSize: 15,
-                                        //       fontFamily: 'Poppins'),
+                                        //       ),
                                         // ),
                                       ],
                                     ),
@@ -158,26 +156,26 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                             MaterialStateProperty.all(
                                                 Colors.black),
                                         shadowColor: MaterialStateProperty.all(
-                                            Colors.red),
+                                            Theme.of(context).primaryColor),
                                         elevation: MaterialStateProperty.all(5),
                                         fixedSize:
                                             const MaterialStatePropertyAll(
                                                 Size(60, 15))),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.delete_rounded,
-                                          color: Colors.red,
+                                          color: Theme.of(context).primaryColor,
                                           size: 15,
                                         ),
                                         // Text(
                                         //   'Delete',
                                         //   style: TextStyle(
-                                        //       color: Colors.red,
+                                        //       color: Theme.of(context).primaryColor,
                                         //       fontSize: 15,
-                                        //       fontFamily: 'Poppins'),
+                                        //       ),
                                         // ),
                                       ],
                                     ),
@@ -193,63 +191,20 @@ class _DownloadsPageState extends State<DownloadsPage> {
                 );
               },
             )
-          : const Column(
+          : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Center(
                   child: Text(
                     'No Downloads Added!!',
                     style: TextStyle(
-                        color: Colors.red,
+                        color: Theme.of(context).primaryColor,
                         fontSize: 25,
-                        fontFamily: 'Poppins',
                         fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedIconTheme: const IconThemeData(color: Colors.red),
-        unselectedIconTheme: const IconThemeData(color: Colors.grey),
-        iconSize: 30,
-        selectedFontSize: 0,
-        unselectedFontSize: 0,
-        onTap: (value) {
-          setState(() {
-            currentPage = value;
-          });
-        },
-        currentIndex: currentPage,
-        items: [
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
-                child: const Icon(Icons.home_rounded)),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {}, child: const Icon(Icons.download_rounded)),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Favorites(),
-                    ),
-                  );
-                },
-                child: const Icon(Icons.favorite_rounded)),
-            label: '',
-          ),
-        ],
-      ),
     );
   }
 }

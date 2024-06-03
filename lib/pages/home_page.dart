@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:streamsavor/pages/downloads_page.dart';
-import 'package:streamsavor/pages/favorites_page.dart';
-import 'package:streamsavor/pages/movie_tiles.dart';
-import 'package:streamsavor/pages/search_results_page.dart';
+import 'package:provider/provider.dart';
+import 'package:streamsavor/pages/animes/animes_homepage.dart';
+import 'package:streamsavor/pages/movies/movies_homepage.dart';
+import 'package:streamsavor/providers/anime_mode_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,9 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentPage = 0;
-
-  final TextEditingController _searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -22,144 +19,62 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool animeMode =
+        Provider.of<AnimeModeProvider>(context, listen: true).animeMode;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        toolbarHeight: 75,
-        title: Row(
-          children: [
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: TextField(
-                  controller: _searchController,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: const InputDecoration(
-                    focusColor: Colors.white,
-                    hintText: 'Search',
-                    hintStyle:
-                        TextStyle(color: Colors.white, fontFamily: 'Poppins'),
-                    contentPadding: EdgeInsets.all(5),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.red,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                      borderSide: BorderSide(width: 0.25, color: Colors.red),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                      borderSide: BorderSide(width: 0.25, color: Colors.red),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(15),
-                      ),
-                      borderSide: BorderSide(width: 0.25, color: Colors.red),
-                    ),
-                  ),
-                  onSubmitted: (value) async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            SearchResults(search: value.trimRight()),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.black,
-      ),
-      body: const SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Latest Launches',
-              style: TextStyle(
-                color: Colors.red,
-                fontFamily: 'Poppins',
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            MovieTiles(endpoint: 'new'),
-            SizedBox(height: 20),
-            Text(
-              'Recently Added',
-              style: TextStyle(
-                color: Colors.red,
-                fontFamily: 'Poppins',
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            MovieTiles(endpoint: 'add'),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        selectedIconTheme: const IconThemeData(color: Colors.red),
-        unselectedIconTheme: const IconThemeData(color: Colors.grey),
-        iconSize: 30,
-        selectedFontSize: 0,
-        unselectedFontSize: 0,
-        onTap: (value) {
-          setState(() {
-            currentPage = value;
-          });
-        },
-        currentIndex: currentPage,
-        items: [
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {
-                  
-                  const HomePage();
-                },
-                child: const Icon(Icons.home_rounded)),
-            label: '',
+        title: Text(
+          animeMode ? 'Anime' : 'Movies',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).primaryColor,
           ),
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DownloadsPage(),
-                    ),
-                  );
-                },
-                child: const Icon(Icons.download_rounded)),
-            label: '',
+        ),
+        elevation: 5,
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        actions: [
+          AnimatedCrossFade(
+            firstChild: Container(
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).primaryColor,
+              ),
+              child: const Icon(
+                Icons.movie,
+                color: Colors.white,
+              ),
+            ),
+            secondChild: Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(
+                'assets/anime.png',
+                width: 50,
+              ),
+            ),
+            crossFadeState: animeMode
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 300),
           ),
-          BottomNavigationBarItem(
-            icon: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Favorites(),
-                    ),
-                  );
-                },
-                child: const Icon(Icons.favorite_rounded)),
-            label: '',
+          IconButton(
+            icon: Icon(
+              Icons.swap_horizontal_circle_sharp,
+              color: Theme.of(context).primaryColor,
+            ),
+            onPressed: () {
+              Provider.of<AnimeModeProvider>(context, listen: false).animeMode =
+                  !animeMode;
+            },
           ),
         ],
       ),
+      body: animeMode ? const AnimeHomePage() : const MoviesHomePage(),
     );
   }
 }
