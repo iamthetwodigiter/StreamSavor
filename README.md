@@ -22,5 +22,5 @@
 * ~Subtitles Support~ `Added`
 * More streaming servers
 * Series Support
-* Anime Support
+* ~Anime Support~ `Added`
 * ~Download Support~ `Added`
