@@ -6,10 +6,15 @@
 
 ### Features:
 
-* Latest Releases and Recently Added Movies are displayed on the homescreen
+* Latest Releases and Recently Added Movies are displayed on the Movies Homescreen
 * Realtime Movie Details are shown on tapping on the movie card
 * Available servers are listed for 1080p streaming
 * Movies can be added to Favorites and can be accessed from the Favorites tab
+`Update 3.0.0`
+* Latest, Trending and Top Animes are displayed on the Anime Homepage
+* Dubbed episodes available [if release, else subbed episodes]
+* Dropdown Menu for easy access of episodes for any animes with 24+ episodes, like One Piece [1000+ episodes]
+* Attractive UI
 
 ### Screenshots:
 
