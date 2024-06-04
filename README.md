@@ -2,7 +2,7 @@
 
 ## Created with ❤️ using Flutter by [@iamthetwodigiter](https://www.github.com/iamthetwodigiter)
 
-## A movie streaming app for binge watchers like myself 😁
+## A streaming app for binge watchers like myself 😁
 
 ### Features:
 
