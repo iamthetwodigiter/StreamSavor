@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:streamsavor/pages/animes/anime_tiles.dart';
 
@@ -12,12 +13,14 @@ class AnimeHomePage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              'Top Animes',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            child: FadeInRight(
+              child: Text(
+                'Top Animes',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -25,12 +28,15 @@ class AnimeHomePage extends StatelessWidget {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              'Trending Animes',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            child: FadeInRight(
+              delay: const Duration(milliseconds: 100),
+              child: Text(
+                'Trending Animes',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -38,12 +44,15 @@ class AnimeHomePage extends StatelessWidget {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              'Latest Episodes',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            child: FadeInRight(
+              delay: const Duration(milliseconds: 200),
+              child: Text(
+                'Latest Episodes',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -51,12 +60,15 @@ class AnimeHomePage extends StatelessWidget {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              'Top Airing Animes',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            child: FadeInRight(
+              delay: const Duration(milliseconds: 300),
+              child: Text(
+                'Top Airing Animes',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

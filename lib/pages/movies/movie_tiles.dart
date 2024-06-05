@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:streamsavor/services/movies.dart';
@@ -30,65 +31,71 @@ class MovieTiles extends StatelessWidget {
                     future: posterUrl(snapshot.data?[index].imdbId),
                     builder: (context, snapshot) {
                       if (snapshot.hasData && snapshot.data != null) {
-                        return Container(
-                          width: size.width * 0.4,
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5),
+                        return FadeInUp(
+                          duration: Duration(milliseconds: index*100),
+                          delay: Duration(milliseconds: index*100),
+                          child: Container(
+                            width: size.width * 0.4,
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
                             ),
-                          ),
-                          child: InkWell(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Card(
-                                  color: Colors.black,
-                                  elevation: 1,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image(
-                                      image: CachedNetworkImageProvider(
-                                        snapshot.data == 'N/A'
-                                            ? 'https://i.postimg.cc/zvn4QYBV/database-rules-zerostate.png'
-                                            : snapshot.data!,
-                                        maxHeight: (size.height * 0.23).toInt(),
+                            child: InkWell(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Card(
+                                    color: Colors.black,
+                                    elevation: 1,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image(
+                                        image: CachedNetworkImageProvider(
+                                          snapshot.data == 'N/A'
+                                              ? 'https://i.postimg.cc/zvn4QYBV/database-rules-zerostate.png'
+                                              : snapshot.data!,
+                                          maxHeight: (size.height * 0.23).toInt(),
+                                        ),
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return SizedBox(
+                                            // height: size.height * 0.2,
+                                            child: Image(
+                                              image: const AssetImage(
+                                                  'assets/error.png'),
+                                              height: size.height * 0.15,
+                                            ),
+                                          );
+                                        },
                                       ),
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return SizedBox(
-                                          // height: size.height * 0.2,
-                                          child: Image(
-                                            image: const AssetImage(
-                                                'assets/error.png'),
-                                            height: size.height * 0.15,
-                                          ),
-                                        );
-                                      },
                                     ),
                                   ),
-                                ),
-                                Text(
-                                  movie.title,
-                                  style: const TextStyle(
-                                      // color: Theme.of(context).primaryColor,
-                                      color: Color.fromARGB(255, 189, 213, 255),
-                                      fontSize: 12,
-                                      overflow: TextOverflow.fade),
-                                  maxLines: 2,
-                                ),
-                              ],
-                            ),
-                            onTap: () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MovieDetails(
-                                    id: movie.imdbId,
+                                  Text(
+                                    movie.title,
+                                    style: const TextStyle(
+                                        // color: Theme.of(context).primaryColor,
+                                        color: Color.fromARGB(255, 189, 213, 255),
+                                        fontSize: 12,
+                                        overflow: TextOverflow.fade),
+                                    maxLines: 2,
                                   ),
-                                ),
-                              );
-                            },
+                                ],
+                              ),
+                              onTap: () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MovieDetails(
+                                      id: movie.imdbId,
+                                      title: movie.title,
+                                      releaseDate: movie.releaseDate,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         );
                       }
@@ -103,7 +110,7 @@ class MovieTiles extends StatelessWidget {
                 backgroundColor: Colors.black,
                 body: Center(
                   child: Text(
-                    'Failed to load data!!\nPlease click on Home icon to Refresh',
+                    'Failed to load data!!\nPlease reload the app',
                     style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       fontSize: 15,

@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/animes/anime_search_results.dart';
@@ -19,57 +20,59 @@ class SearchPage extends StatelessWidget {
             Expanded(
               child: Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: TextField(
-                  controller: searchController,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                    focusColor: Colors.white,
-                    hintText: 'Search',
-                    hintStyle: const TextStyle(
+                child: FadeInDown(
+                  child: TextField(
+                    controller: searchController,
+                    style: const TextStyle(
                       color: Colors.white,
                     ),
-                    contentPadding: const EdgeInsets.all(5),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(15),
+                    decoration: InputDecoration(
+                      focusColor: Colors.white,
+                      hintText: 'Search',
+                      hintStyle: const TextStyle(
+                        color: Colors.white,
                       ),
-                      borderSide: BorderSide(
-                          width: 0.25, color: Theme.of(context).primaryColor),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(15),
+                      contentPadding: const EdgeInsets.all(5),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).primaryColor,
                       ),
-                      borderSide: BorderSide(
-                          width: 0.25, color: Theme.of(context).primaryColor),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(15),
+                      border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                        borderSide: BorderSide(
+                            width: 0.25, color: Theme.of(context).primaryColor),
                       ),
-                      borderSide: BorderSide(
-                          width: 0.25, color: Theme.of(context).primaryColor),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                        borderSide: BorderSide(
+                            width: 0.25, color: Theme.of(context).primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                        borderSide: BorderSide(
+                            width: 0.25, color: Theme.of(context).primaryColor),
+                      ),
                     ),
+                    onSubmitted: (value) async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Provider.of<AnimeModeProvider>(
+                                      context,
+                                      listen: true)
+                                  .animeMode
+                              ? AnimeSearchResult(search: value.trimRight())
+                              : MovieSearchResults(search: value.trimRight()),
+                        ),
+                      );
+                    },
                   ),
-                  onSubmitted: (value) async {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Provider.of<AnimeModeProvider>(
-                                    context,
-                                    listen: true)
-                                .animeMode
-                            ? AnimeSearchResult(search: value.trimRight())
-                            : MovieSearchResults(search: value.trimRight()),
-                      ),
-                    );
-                  },
                 ),
               ),
             ),
@@ -77,12 +80,14 @@ class SearchPage extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text(
-          'Search your content here',
-          style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
+        child: FadeInUp(
+          child: Text(
+            'Search your content here',
+            style: TextStyle(
+              color: Theme.of(context).primaryColor,
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:streamsavor/pages/movies/movie_tiles.dart';
 
@@ -12,12 +13,14 @@ class MoviesHomePage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              'Latest Launches',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            child: FadeInRight(
+              child: Text(
+                'Latest Launches',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -25,12 +28,15 @@ class MoviesHomePage extends StatelessWidget {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Text(
-              'Recently Added',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
+            child: FadeInRight(
+              delay: const Duration(milliseconds: 100),
+              child: Text(
+                'Recently Added',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/animes/animes_homepage.dart';
@@ -24,12 +25,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text(
-          animeMode ? 'Anime' : 'Movies',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
+        title: FadeInDown(
+          child: Text(
+            animeMode ? 'Anime' : 'Movies',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).primaryColor,
+            ),
           ),
         ),
         elevation: 5,
@@ -37,24 +40,28 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         actions: [
           AnimatedCrossFade(
-            firstChild: Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).primaryColor,
-              ),
-              child: const Icon(
-                Icons.movie,
-                color: Colors.white,
+            firstChild: FadeInDown(
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: const Icon(
+                  Icons.movie,
+                  color: Colors.white,
+                ),
               ),
             ),
-            secondChild: Container(
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: Image.asset(
-                'assets/anime.png',
-                width: 50,
+            secondChild: FadeInDown(
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: Image.asset(
+                  'assets/anime.png',
+                  width: 50,
+                ),
               ),
             ),
             crossFadeState: animeMode
@@ -62,15 +69,17 @@ class _HomePageState extends State<HomePage> {
                 : CrossFadeState.showFirst,
             duration: const Duration(milliseconds: 300),
           ),
-          IconButton(
-            icon: Icon(
-              Icons.swap_horizontal_circle_sharp,
-              color: Theme.of(context).primaryColor,
+          FadeInRight(
+            child: IconButton(
+              icon: Icon(
+                Icons.swap_horizontal_circle_sharp,
+                color: Theme.of(context).primaryColor,
+              ),
+              onPressed: () {
+                Provider.of<AnimeModeProvider>(context, listen: false).animeMode =
+                    !animeMode;
+              },
             ),
-            onPressed: () {
-              Provider.of<AnimeModeProvider>(context, listen: false).animeMode =
-                  !animeMode;
-            },
           ),
         ],
       ),

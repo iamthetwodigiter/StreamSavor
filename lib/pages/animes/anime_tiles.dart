@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:streamsavor/pages/animes/anime_details.dart';
@@ -22,12 +23,15 @@ class AnimeTiles extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    if (snapshot.hasData) {
-                      final anime = snapshot.data![index];
-                      return Container(
+                scrollDirection: Axis.horizontal,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  if (snapshot.hasData) {
+                    final anime = snapshot.data![index];
+                    return FadeInUp(
+                      duration: Duration(milliseconds: index * 200),
+                      delay: Duration(milliseconds: index * 100),
+                      child: Container(
                         width: size.width * 0.4,
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                         decoration: const BoxDecoration(
@@ -47,6 +51,7 @@ class AnimeTiles extends StatelessWidget {
                                   child: Image(
                                     image: CachedNetworkImageProvider(
                                       anime.poster,
+                                      maxHeight: (size.height * 0.25).toInt(),
                                     ),
                                     errorBuilder: (context, error, stackTrace) {
                                       return SizedBox(
@@ -83,16 +88,49 @@ class AnimeTiles extends StatelessWidget {
                             );
                           },
                         ),
-                      );
-                    }
-                  });
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Scaffold(
+                      backgroundColor: Colors.black,
+                      body: Center(
+                        child: Text(
+                          'Failed to load data!!',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Scaffold(
+                      backgroundColor: Colors.black,
+                      body: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Text(
+                              'Loading....',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              );
             } else if (snapshot.hasError) {
               // return Scaffold(body: Text(snapshot.error.toString()));
               return Scaffold(
                 backgroundColor: Colors.black,
                 body: Center(
                   child: Text(
-                    'Failed to load data!!\nPlease click on Home icon to Refresh',
+                    'Failed to load data!!\nPlease reload the app',
                     style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       fontSize: 15,

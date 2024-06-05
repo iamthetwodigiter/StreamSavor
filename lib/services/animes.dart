@@ -57,6 +57,7 @@ Future<AnimeInfo> fetchAnime(String id) async {
 Future<StreamingLinks> fetchStreamingLinks(String episodeID) async {
   String streamingLink;
   bool isDub = true;
+  String subUrl = '';
   final res = await http.get(Uri.parse(
       ''));
   final data = jsonDecode(res.body);
@@ -69,8 +70,13 @@ Future<StreamingLinks> fetchStreamingLinks(String episodeID) async {
   } else {
     streamingLink = data2['sources'][0]['url'];
   }
+  for (var x in data['tracks']) {
+    if (x['label'] == 'English') {
+      subUrl = x['file'];
+    }
+  }
   final streaming = StreamingLinks(
-    subUrl: data['tracks'][0]['file'],
+    subUrl: subUrl,
     streamingLink: streamingLink,
     isDub: isDub,
   );
@@ -78,10 +84,11 @@ Future<StreamingLinks> fetchStreamingLinks(String episodeID) async {
 }
 
 Future<List<SearchAnime>> searchAnime(String search) async {
-  final res = await http.get(Uri.parse(''));
+  final res = await http.get(Uri.parse(
+      ''));
   final data = jsonDecode(res.body);
   final searchResults = <SearchAnime>[];
-  for(final search in data['animes']) {
+  for (final search in data['animes']) {
     searchResults.add(SearchAnime.fromJson(search));
   }
   return searchResults;

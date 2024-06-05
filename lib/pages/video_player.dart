@@ -1,18 +1,18 @@
 import 'dart:io';
-import 'package:flick_video_player/flick_video_player.dart';
+import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:visibility_detector/visibility_detector.dart';
-import 'package:video_player/video_player.dart';
-import 'package:http/http.dart' as http;
+import 'package:subtitle_wrapper_package/subtitle_wrapper_package.dart';
 
 class DefaultPlayer extends StatefulWidget {
   final String subUrl;
   final String videoUrl;
+  final String name;
 
   const DefaultPlayer({
     super.key,
     required this.subUrl,
     required this.videoUrl,
+    required this.name,
   });
 
   @override
@@ -20,81 +20,79 @@ class DefaultPlayer extends StatefulWidget {
 }
 
 class _DefaultPlayerState extends State<DefaultPlayer> {
-  late FlickManager flickManager;
+  late VideoPlayerController _videoPlayerController;
+  late CustomVideoPlayerController _customVideoPlayerController;
+  final CustomVideoPlayerSettings _customVideoPlayerSettings =
+      const CustomVideoPlayerSettings(showSeekButtons: true);
+  late SubtitleController subtitleController;
 
   @override
   void initState() {
     super.initState();
-    flickManager = FlickManager(
-      videoPlayerController: videoPlayer(),
+    subtitleController = SubtitleController(
+      subtitleUrl: widget.subUrl,
+      subtitleType: SubtitleType.webvtt,
     );
-  }
-
-  VideoPlayerController videoPlayer() {
     if (widget.videoUrl.contains('storage')) {
-      return VideoPlayerController.file(
+      _videoPlayerController = VideoPlayerController.file(
         File(widget.videoUrl),
-        closedCaptionFile: _loadCaptions(),
-      );
+      )..initialize().then(
+          (value) => setState(() {}),
+        );
+    } else {
+      _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoUrl),
+      )..initialize().then(
+          (value) => setState(() {}),
+        );
     }
-    return VideoPlayerController.networkUrl(
-      Uri.parse(widget.videoUrl),
-      closedCaptionFile: _loadCaptions(),
+    _customVideoPlayerController = CustomVideoPlayerController(
+      context: context,
+      videoPlayerController: _videoPlayerController,
+      customVideoPlayerSettings: _customVideoPlayerSettings,
     );
-  }
-
-  Future<ClosedCaptionFile> _loadCaptions() async {
-    if (widget.subUrl != 'none') {
-      final url = Uri.parse(widget.subUrl);
-      final data = await http.get(url);
-      final srtContent = data.body.toString();
-      return WebVTTCaptionFile(srtContent);
-    }
-    return WebVTTCaptionFile('');
   }
 
   @override
   void dispose() {
-    flickManager.dispose();
+    _customVideoPlayerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: ObjectKey(flickManager),
-      onVisibilityChanged: (visibility) {
-        if (visibility.visibleFraction == 0 && mounted) {
-          flickManager.flickControlManager?.autoPause();
-        } else if (visibility.visibleFraction == 1) {
-          flickManager.flickControlManager?.autoResume();
-        }
-      },
-      child: SizedBox(
-        child: FlickVideoPlayer(
-          flickManager: flickManager,
-          flickVideoWithControls: FlickVideoWithControls(
-            closedCaptionTextStyle: const TextStyle(fontSize: 15),
-            controls: const FlickPortraitControls(),
-            videoFit: BoxFit.fitWidth,
-            playerErrorFallback: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, color: Theme.of(context).primaryColor, size: 32),
-                  const SizedBox(width: 10),
-                  const Text(
-                    'Error Loading!!!',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ],
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: Navigator.of(context).pop,
+          icon: Icon(
+            Icons.arrow_back_ios_rounded,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        title: Text(
+          widget.name,
+          style: TextStyle(color: Theme.of(context).canvasColor),
+        ),
+      ),
+      body: SafeArea(
+        child: ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            SubtitleWrapper(
+              videoPlayerController: _videoPlayerController,
+              subtitleController: subtitleController,
+              subtitleStyle: const SubtitleStyle(
+                textColor: Colors.white,
+                fontSize: 12,
+                hasBorder: true,
+              ),
+              videoChild: CustomVideoPlayer(
+                customVideoPlayerController: _customVideoPlayerController,
               ),
             ),
-          ),
-          flickVideoWithControlsFullscreen: const FlickVideoWithControls(
-            controls: FlickLandscapeControls(),
-            videoFit: BoxFit.fitWidth,
-          ),
+          ],
         ),
       ),
     );

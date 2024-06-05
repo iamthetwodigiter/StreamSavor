@@ -1,14 +1,12 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:streamsavor/pages/animes/anime_details.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
-import 'package:streamsavor/services/movies.dart';
 import 'package:streamsavor/pages/movies/movie_details_page.dart';
 import 'package:streamsavor/repository/movies_repository.dart';
+import 'package:streamsavor/services/movies.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});
@@ -18,13 +16,28 @@ class Favorites extends StatefulWidget {
 }
 
 class _FavoritesState extends State<Favorites> {
+  late Box<Movie> favoritesBox = Hive.box('movies-fav');
+  late Box<AnimeCards> animeBox = Hive.box('anime-fav');
+  late List<String> moviesThumb = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPosterUrls();
+  }
+
+  Future<void> _fetchPosterUrls() async {
+    if (favoritesBox.isNotEmpty) {
+      for (int i = 0; i < favoritesBox.length; i++) {
+        final x = await moviesInfo(favoritesBox.values.elementAt(i).id);
+        moviesThumb.add(x.cover);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> titles = [];
-    List<String> releaseDates = [];
     final size = MediaQuery.of(context).size;
-    late Box<Movie> favoritesBox = Hive.box('movies-fav');
-    late Box<AnimeCards> animeBox = Hive.box('anime-fav');
 
     if (favoritesBox.length == 0 && animeBox.length == 0) {
       return Scaffold(
@@ -36,12 +49,14 @@ class _FavoritesState extends State<Favorites> {
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.only(top: 10, bottom: 10),
-                  child: Text(
-                    'Favorites',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
+                  child: FadeInRight(
+                    child: Text(
+                      'Favorites',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -54,12 +69,14 @@ class _FavoritesState extends State<Favorites> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
-              child: Text(
-                'No Favorites Added!!',
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold),
+              child: FadeInUp(
+                child: Text(
+                  'No Favorites Added!!',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
@@ -67,193 +84,219 @@ class _FavoritesState extends State<Favorites> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        toolbarHeight: 75,
-        title: Row(
-          children: [
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: Text(
-                  'Favorites',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.black,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Text(
-              'Movies',
-              style: TextStyle(
+    return FutureBuilder(
+        future: Future.delayed(const Duration(milliseconds: 900)),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
                 color: Theme.of(context).primaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            SizedBox(
-              height: size.height * 0.35,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: favoritesBox.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: size.width * 0.4,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
+            );
+          }
+
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              toolbarHeight: 75,
+              title: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: FadeInRight(
+                        child: Text(
+                          'Favorites',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        InkWell(
-                          child: FutureBuilder(
-                            future: moviesInfo(
-                                favoritesBox.values.elementAt(index).id),
-                            builder: (context, snapshot) {
-                              titles.add(
-                                  favoritesBox.values.elementAt(index).title);
-                              releaseDates.add(favoritesBox.values
-                                  .elementAt(index)
-                                  .releaseDate!);
-                              if (snapshot.hasData) {
-                                return Container(
-                                  width: size.width * 0.4,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(5),
-                                    ),
-                                  ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.black,
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  FadeInLeft(
+                    child: Text(
+                      'Movies',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  FadeInRight(
+                    child: SizedBox(
+                      height: size.height * 0.35,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: favoritesBox.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: size.width * 0.4,
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                InkWell(
                                   child: Column(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Card(
-                                        color: Colors.black,
-                                        elevation: 1,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: CachedNetworkImage(
-                                              imageUrl: snapshot.data!.cover),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              moviesThumb.elementAt(index),
+                                              height: size.height * 0.25,
+                                          placeholder: (context, url) {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          },
                                         ),
                                       ),
+                                      const SizedBox(height: 5),
                                       Text(
                                         favoritesBox.values
                                             .elementAt(index)
                                             .title,
                                         style: TextStyle(
-                                          color: Theme.of(context).primaryColor,
-                                          fontSize: 12,
-                                        ),
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontSize: 12,
+                                            overflow: TextOverflow.fade),
+                                        softWrap: true,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
                                       ),
                                     ],
                                   ),
-                                );
-                              } else {
-                                return CircularProgressIndicator(
-                                    color: Theme.of(context).primaryColor);
-                              }
-                            },
-                          ),
-                          onTap: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => MovieDetails(
-                                  id: favoritesBox.values.elementAt(index).id,
+                                  onTap: () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MovieDetails(
+                                          id: favoritesBox.values
+                                              .elementAt(index)
+                                              .id,
+                                          title: favoritesBox.values
+                                              .elementAt(index)
+                                              .title,
+                                          releaseDate: favoritesBox.values
+                                              .elementAt(index)
+                                              .releaseDate!,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            Text(
-              'Anime',
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: size.height * 0.32,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: animeBox.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: size.width * 0.375,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        InkWell(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl:
-                                    animeBox.values.elementAt(index).poster,
-                              ),
-                              Text(
-                                animeBox.values.elementAt(index).name,
-                                style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                    fontSize: 12,
-                                    overflow: TextOverflow.fade),
-                                softWrap: true,
-                                maxLines: 2,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                          onTap: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AnimeDetails(
-                                  id: animeBox.values.elementAt(index).id,
-                                  name: animeBox.values.elementAt(index).name,
-                                  poster:
-                                      animeBox.values.elementAt(index).poster,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                  ),
+                  FadeInUp(
+                    child: Text(
+                      'Anime',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  );
-                },
+                  ),
+                  const SizedBox(height: 10),
+                  FadeInDown(
+                    child: SizedBox(
+                      height: size.height * 0.32,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: animeBox.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: size.width * 0.375,
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                InkWell(
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(10)),
+                                        child: CachedNetworkImage(
+                                          imageUrl: animeBox.values
+                                              .elementAt(index)
+                                              .poster,
+                                              height: size.height * 0.25,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        animeBox.values.elementAt(index).name,
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontSize: 12,
+                                            overflow: TextOverflow.fade),
+                                        softWrap: true,
+                                        maxLines: 2,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () async {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AnimeDetails(
+                                          id: animeBox.values
+                                              .elementAt(index)
+                                              .id,
+                                          name: animeBox.values
+                                              .elementAt(index)
+                                              .name,
+                                          poster: animeBox.values
+                                              .elementAt(index)
+                                              .poster,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
+        });
   }
 }

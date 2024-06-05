@@ -1,9 +1,11 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:streamsavor/pages/video_player.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/services/animes.dart';
+import 'package:streamsavor/services/downloader.dart';
 
 class AnimeDetails extends StatefulWidget {
   final String id;
@@ -17,7 +19,7 @@ class AnimeDetails extends StatefulWidget {
   });
 
   @override
-  _AnimeDetailsState createState() => _AnimeDetailsState();
+  State<AnimeDetails> createState() => _AnimeDetailsState();
 }
 
 class _AnimeDetailsState extends State<AnimeDetails> {
@@ -26,6 +28,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
 
   late Box<AnimeCards> favoritesBox;
   Set<AnimeCards> favAnimes = {};
+
+  bool _isExpanded = false;
+  int episodeNumber = 0;
 
   @override
   void initState() {
@@ -115,305 +120,449 @@ class _AnimeDetailsState extends State<AnimeDetails> {
 
               return Container(
                 margin: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: animeData.poster,
-                          height: size.height * 0.275,
-                        ),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                animeData.name,
-                                style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-                              RichText(
-                                text: TextSpan(
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(255, 247, 202, 255),
-                                  ),
-                                  children: [
-                                    const TextSpan(
-                                      text: 'Aired: ',
-                                      style: TextStyle(
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: animeData.aired!,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: '\nPremiered: ',
-                                      style: TextStyle(
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: animeData.premiered!,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: '\nJapanese: ',
-                                      style: TextStyle(
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: animeData.japanese!,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: '\nDuration: ',
-                                      style: TextStyle(
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: animeData.duration,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: '\nRating: ',
-                                      style: TextStyle(
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: animeData.rating,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: '\nStatus: ',
-                                      style: TextStyle(
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: animeData.status!,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                      ),
-                                    ),
-                                    // const TextSpan(
-                                    //   text: '\nSubbed: ',
-                                    //   style: TextStyle(
-                                    //     color: Colors.purple,
-                                    //     fontWeight: FontWeight.bold,
-                                    //     fontFamily: 'Poppins',
-                                    //     fontSize: 12,
-                                    //   ),
-                                    // ),
-                                    // TextSpan(
-                                    //   text: animeData.sub.toString(),
-                                    //   style: const TextStyle(
-                                    //     fontFamily: 'Poppins',
-                                    //   ),
-                                    // ),
-                                    // const TextSpan(
-                                    //   text: '\nDubbed: ',
-                                    //   style: TextStyle(
-                                    //     color: Colors.purple,
-                                    //     fontWeight: FontWeight.bold,
-                                    //     fontFamily: 'Poppins',
-                                    //     fontSize: 12,
-                                    //   ),
-                                    // ),
-                                    // TextSpan(
-                                    //   text: animeData.dub.toString(),
-                                    //   style: const TextStyle(
-                                    //     fontFamily: 'Poppins',
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      animeData.description,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 247, 202, 255),
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.only(left: 10, right: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: FadeInUp(
+                  child: Column(
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                            'Episodes',
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 22),
-                            textAlign: TextAlign.left,
+                          CachedNetworkImage(
+                            imageUrl: animeData.poster,
+                            height: size.height * 0.275,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              DropdownButton<int>(
-                                dropdownColor:
-                                    const Color.fromARGB(186, 78, 47, 83),
-                                value: _currentPage,
-                                items: List.generate(totalPages, (index) {
-                                  return DropdownMenuItem(
-                                    value: index,
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: FadeInRight(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FadeInDown(
                                     child: Text(
-                                      (index + 1).toString(),
+                                      animeData.name,
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 15),
+                                  RichText(
+                                    text: TextSpan(
                                       style: const TextStyle(
                                         color:
                                             Color.fromARGB(255, 247, 202, 255),
                                       ),
+                                      children: [
+                                        const TextSpan(
+                                          text: 'Aired: ',
+                                          style: TextStyle(
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: animeData.aired!,
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                          ),
+                                        ),
+                                        const TextSpan(
+                                          text: '\nPremiered: ',
+                                          style: TextStyle(
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: animeData.premiered!,
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                          ),
+                                        ),
+                                        const TextSpan(
+                                          text: '\nJapanese: ',
+                                          style: TextStyle(
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: animeData.japanese!,
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                          ),
+                                        ),
+                                        const TextSpan(
+                                          text: '\nDuration: ',
+                                          style: TextStyle(
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: animeData.duration,
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                          ),
+                                        ),
+                                        const TextSpan(
+                                          text: '\nRating: ',
+                                          style: TextStyle(
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: animeData.rating,
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                          ),
+                                        ),
+                                        const TextSpan(
+                                          text: '\nStatus: ',
+                                          style: TextStyle(
+                                            color: Colors.purple,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: animeData.status!,
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                }),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _currentPage = value!;
-                                  });
-                                },
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: (_currentPage + 1) * _itemsPerPage >
-                              animeData.episodes.length
-                          ? animeData.episodes.length -
-                              _currentPage * _itemsPerPage
-                          : _itemsPerPage,
-                      itemBuilder: (context, index) {
-                        final itemIndex = _currentPage * _itemsPerPage + index;
-                        final items = animeData.episodes[itemIndex];
-                        return Container(
-                          height: size.height * 0.18,
-                          width: double.infinity,
-                          margin: const EdgeInsets.all(8),
-                          padding: const EdgeInsets.all(10),
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(186, 78, 47, 83),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
-                            ),
+                      const SizedBox(height: 20),
+                      FadeInLeft(
+                        child: Text(
+                          animeData.description,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 247, 202, 255),
+                            fontSize: 15,
                           ),
-                          child: Row(
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl: animeData.poster,
-                                width: size.width * 0.2,
-                              ),
-                              Flexible(
-                                child: InkWell(
-                                  onTap: () async {
-                                    final streamingLinks =
-                                        await fetchStreamingLinks(
-                                            items.episodeId);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => DefaultPlayer(
-                                          videoUrl:
-                                              streamingLinks.streamingLink,
-                                          subUrl: streamingLinks.subUrl,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        padding: const EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Episodes',
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22),
+                              textAlign: TextAlign.left,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                DropdownButton<int>(
+                                  dropdownColor:
+                                      const Color.fromARGB(186, 78, 47, 83),
+                                  value: _currentPage,
+                                  items: List.generate(totalPages, (index) {
+                                    return DropdownMenuItem(
+                                      value: index,
+                                      child: Text(
+                                        (index + 1).toString(),
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 247, 202, 255),
                                         ),
                                       ),
                                     );
+                                  }),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _currentPage = value!;
+                                    });
                                   },
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Episode: ${items.number}',
-                                        style: const TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 235, 119, 255),
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                        items.title,
-                                        softWrap: true,
-                                        maxLines: 3,
-                                        style: const TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 235, 119, 255),
-                                            fontSize: 12),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Container(
-                                        alignment: Alignment.bottomRight,
-                                        child: Text(
-                                          (animeData.dub != null &&
-                                                  items.number <= animeData.dub!
-                                              ? 'Dub'
-                                              : 'Sub'),
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Color.fromARGB(
-                                                255, 247, 202, 255),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: (_currentPage + 1) * _itemsPerPage >
+                                animeData.episodes.length
+                            ? animeData.episodes.length -
+                                _currentPage * _itemsPerPage
+                            : _itemsPerPage,
+                        itemBuilder: (context, index) {
+                          final itemIndex =
+                              _currentPage * _itemsPerPage + index;
+                          final items = animeData.episodes[itemIndex];
+                          return FadeInUp(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              height: _isExpanded && index == episodeNumber
+                                  ? size.height * 0.25
+                                  : size.height * 0.18,
+                              width: double.infinity,
+                              margin: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(10),
+                              decoration: const BoxDecoration(
+                                color: Color.fromARGB(186, 78, 47, 83),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
                                 ),
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                              child: SingleChildScrollView(
+                                child: Row(
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: animeData.poster,
+                                      width: size.width * 0.2,
+                                    ),
+                                    Flexible(
+                                      child: FadeInRight(
+                                        delay:
+                                            Duration(milliseconds: index * 100),
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              _isExpanded = !_isExpanded;
+                                              episodeNumber = index;
+                                            });
+                                          },
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'Episode: ${items.number}',
+                                                style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 235, 119, 255),
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                items.title,
+                                                softWrap: true,
+                                                maxLines: 3,
+                                                style: const TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 235, 119, 255),
+                                                    fontSize: 12),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Container(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                child: Text(
+                                                  (animeData.dub != null &&
+                                                          items.number <=
+                                                              animeData.dub!
+                                                      ? 'Dub'
+                                                      : 'Sub'),
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Color.fromARGB(
+                                                        255, 247, 202, 255),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              _isExpanded &&
+                                                      index == episodeNumber
+                                                  ? Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FadeInRight(
+                                                          child: TextButton(
+                                                            style: ButtonStyle(
+                                                              backgroundColor:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    192,
+                                                                    247,
+                                                                    202,
+                                                                    255),
+                                                              ),
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
+                                                                SnackBar(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .black87,
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          1000),
+                                                                  content: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      CircularProgressIndicator(
+                                                                        color: Theme.of(context)
+                                                                            .primaryColor,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              10),
+                                                                      const Text(
+                                                                          'Loading...')
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              );
+
+                                                              final streamingLinks =
+                                                                  await fetchStreamingLinks(
+                                                                      items
+                                                                          .episodeId);
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          DefaultPlayer(
+                                                                    videoUrl:
+                                                                        streamingLinks
+                                                                            .streamingLink,
+                                                                    subUrl: streamingLinks
+                                                                        .subUrl,
+                                                                        name: items.title,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Text(
+                                                              'Play',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                        .deepPurpleAccent[
+                                                                    700],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        FadeInRight(
+                                                          delay: const Duration(
+                                                              milliseconds: 50),
+                                                          child: TextButton(
+                                                            style: ButtonStyle(
+                                                              backgroundColor:
+                                                                  MaterialStateProperty
+                                                                      .all(
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    192,
+                                                                    247,
+                                                                    202,
+                                                                    255),
+                                                              ),
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
+                                                                SnackBar(
+                                                                  content: Text(
+                                                                    'Download ${items.title} Started',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .primaryColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .black,
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          1500),
+                                                                ),
+                                                              );
+                                                              final streamingLinks =
+                                                                  await fetchStreamingLinks(
+                                                                      items
+                                                                          .episodeId);
+                                                              downloadFile(
+                                                                  streamingLinks
+                                                                      .streamingLink,
+                                                                  snapshot.data!
+                                                                      .name,
+                                                                  items.title,
+                                                                  snapshot.data!
+                                                                      .poster,
+                                                                  streamingLinks
+                                                                      .subUrl,
+                                                                  true,
+                                                                  context);
+                                                            },
+                                                            child: Text(
+                                                              'Download',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                        .deepPurpleAccent[
+                                                                    700],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const Row(),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             } else if (snapshot.connectionState == ConnectionState.waiting) {

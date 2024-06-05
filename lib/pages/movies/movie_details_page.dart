@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:streamsavor/services/movies.dart';
@@ -9,10 +10,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class MovieDetails extends StatefulWidget {
   final String id;
-  const MovieDetails({
-    super.key,
-    required this.id,
-  });
+  final String title;
+  final String releaseDate;
+  const MovieDetails(
+      {super.key,
+      required this.id,
+      required this.title,
+      required this.releaseDate});
 
   @override
   State<MovieDetails> createState() => _MovieDetailsState();
@@ -78,14 +82,13 @@ class _MovieDetailsState extends State<MovieDetails> {
               color: Theme.of(context).primaryColor,
             ),
             onPressed: () async {
-              final res = await moviesInfo(widget.id);
               if (favoriteMovies.any((movie) => movie.id == widget.id)) {
                 favoriteMovies.removeWhere((movie) => movie.id == widget.id);
               } else {
                 favoriteMovies.add(Movie(
                     id: widget.id,
-                    title: res.title,
-                    releaseDate: res.releaseDate));
+                    title: widget.title,
+                    releaseDate: widget.releaseDate));
               }
               _saveFavorites();
               setState(() {});
@@ -111,272 +114,298 @@ class _MovieDetailsState extends State<MovieDetails> {
               name = snapshot.data!.title;
               return ListView(
                 children: [
-                  Image(
-                    image: CachedNetworkImageProvider(snapshot.data!.cover !=
-                            'N/A'
-                        ? snapshot.data!.cover
-                        : 'https://www.gstatic.com/mobilesdk/180227_mobilesdk/storage_rules_zerostate.png'),
-                    height: size.height * 0.268,
-                    fit: BoxFit.fitWidth,
-                    errorBuilder: (context, error, stackTrace) {
-                      return SizedBox(
-                        height: size.height * 0.268,
-                        child: Image.asset('assets/error.png'),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  Text(
-                    snapshot.data!.title,
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    snapshot.data!.description,
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 124, 124, 124),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      children: [
-                        const TextSpan(
-                          text: '\nReleased:  ',
-                        ),
-                        TextSpan(
-                          text: snapshot.data!.releaseDate,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 12),
-                        ),
-                        const TextSpan(
-                          text: '\nRatings:  ',
-                        ),
-                        TextSpan(
-                          text: '${snapshot.data!.ratings} ⭐',
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 12),
-                        ),
-                        const TextSpan(
-                          text: '\nDuration:  ',
-                        ),
-                        TextSpan(
-                          text: snapshot.data!.duration,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 12),
-                        ),
-                        const TextSpan(
-                          text: '\nGenres:  ',
-                        ),
-                        TextSpan(
-                          text: snapshot.data!.genres,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: '\nCasts:  ',
-                        ),
-                        TextSpan(
-                          text: snapshot.data!.casts,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: '\nDirector(s):  ',
-                        ),
-                        TextSpan(
-                          text: snapshot.data!.director,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const TextSpan(
-                          text: '\nWriter(s):  ',
-                        ),
-                        TextSpan(
-                          text: snapshot.data!.writer,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                  FadeInDown(
+                    child: Image(
+                      image: CachedNetworkImageProvider(snapshot.data!.cover !=
+                              'N/A'
+                          ? snapshot.data!.cover
+                          : 'https://www.gstatic.com/mobilesdk/180227_mobilesdk/storage_rules_zerostate.png'),
+                      height: size.height * 0.268,
+                      fit: BoxFit.fitWidth,
+                      errorBuilder: (context, error, stackTrace) {
+                        return SizedBox(
+                          height: size.height * 0.268,
+                          child: Image.asset('assets/error.png'),
+                        );
+                      },
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        backgroundColor: Colors.black,
-                        title: const Text(
-                          'Choose a Server',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 124, 124, 124),
-                            fontSize: 20,
+                  const SizedBox(height: 15),
+                  FadeInLeft(
+                    child: Text(
+                      snapshot.data!.title,
+                      style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  FadeInRight(
+                    child: Text(
+                      snapshot.data!.description,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+                  FadeInLeft(
+                    child: RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 124, 124, 124),
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          const TextSpan(
+                            text: '\nReleased:  ',
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        contentTextStyle: const TextStyle(
-                          color: Colors.blue,
-                          fontSize: 18,
-                        ),
-                        content: SizedBox(
-                          width: 200,
-                          height: 150,
-                          child: FutureBuilder<ServerData>(
-                            future: listServers(snapshot.data!.id),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Center(
-                                  child: SizedBox(
-                                    height: 50,
-                                    width: 50,
-                                    child: CircularProgressIndicator(
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                                );
-                              } else if (snapshot.hasError) {
-                                return Text(
-                                  // 'Error: ${snapshot.error}',
-                                  'Failed to load servers!!!',
-                                  style: TextStyle(
-                                    color: Theme.of(context).primaryColor,
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                );
-                              } else {
-                                final server = snapshot.data!;
-                                return ListView.builder(
-                                  itemCount: server.links.length,
-                                  itemBuilder: (context, index) {
-                                    final link = server.links;
-                                    return Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            int x =
-                                                server.stream!.lastIndexOf('/');
-                                            String url = server.stream!
-                                                    .substring(0, x + 1) +
-                                                link.values.elementAt(index);
-
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DefaultPlayer(
-                                                        videoUrl: url,
-                                                        subUrl:
-                                                            server.subtitle),
-                                              ),
-                                            );
-                                          },
-                                          child: Text(
-                                            link.keys.elementAt(index),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            },
+                          TextSpan(
+                            text: snapshot.data!.releaseDate,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12),
                           ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => {Navigator.pop(context)},
-                            child: const Text('Close'),
+                          const TextSpan(
+                            text: '\nRatings:  ',
+                          ),
+                          TextSpan(
+                            text: '${snapshot.data!.ratings} ⭐',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12),
+                          ),
+                          const TextSpan(
+                            text: '\nDuration:  ',
+                          ),
+                          TextSpan(
+                            text: snapshot.data!.duration,
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12),
+                          ),
+                          const TextSpan(
+                            text: '\nGenres:  ',
+                          ),
+                          TextSpan(
+                            text: snapshot.data!.genres,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const TextSpan(
+                            text: '\nCasts:  ',
+                          ),
+                          TextSpan(
+                            text: snapshot.data!.casts,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const TextSpan(
+                            text: '\nDirector(s):  ',
+                          ),
+                          TextSpan(
+                            text: snapshot.data!.director,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const TextSpan(
+                            text: '\nWriter(s):  ',
+                          ),
+                          TextSpan(
+                            text: snapshot.data!.writer,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.black),
-                      shadowColor: MaterialStateProperty.all(
-                          Theme.of(context).primaryColor),
-                      elevation: MaterialStateProperty.all(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.play_arrow_rounded,
-                          color: Theme.of(context).primaryColor,
-                          size: 30,
-                        ),
-                        Text(
-                          'Play',
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'Download $name Started',
+                  const SizedBox(height: 20),
+                  FadeInDown(
+                    child: ElevatedButton(
+                      onPressed: () => showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: Colors.black,
+                          title: const Text(
+                            'Choose a Server',
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 124, 124, 124),
+                              fontSize: 20,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          backgroundColor: Colors.black,
-                          duration: const Duration(milliseconds: 1500),
-                        ),
-                      );
-                      final temp = await listServers(widget.id);
-
-                      final link = await listStreams(temp.stream!);
-                      final downloadLink = temp.stream!
-                              .substring(0, temp.stream!.lastIndexOf('/') + 1) +
-                          link.values.elementAt(0);
-                      downloadFile(downloadLink, name, temp.subtitle,
-                          snapshot.data!.cover, temp.subtitle, context);
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.black),
-                      shadowColor: MaterialStateProperty.all(
-                          Theme.of(context).primaryColor),
-                      elevation: MaterialStateProperty.all(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.download_rounded,
-                          color: Theme.of(context).primaryColor,
-                          size: 30,
-                        ),
-                        Text(
-                          'Download',
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 15,
+                          contentTextStyle: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 18,
                           ),
+                          content: SizedBox(
+                            width: 200,
+                            height: 150,
+                            child: FutureBuilder<ServerData>(
+                              future: listServers(snapshot.data!.id),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: SizedBox(
+                                      height: 50,
+                                      width: 50,
+                                      child: CircularProgressIndicator(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Text(
+                                    // 'Error: ${snapshot.error}',
+                                    'Failed to load servers!!!',
+                                    style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                } else {
+                                  final server = snapshot.data!;
+                                  return ListView.builder(
+                                    itemCount: server.links.length,
+                                    itemBuilder: (context, index) {
+                                      final link = server.links;
+                                      return Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              int x = server.stream!
+                                                  .lastIndexOf('/');
+                                              String url = server.stream!
+                                                      .substring(0, x + 1) +
+                                                  link.values.elementAt(index);
+
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DefaultPlayer(
+                                                    videoUrl: url,
+                                                    subUrl: server.subtitle,
+                                                    name: snapshot.data!.name,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Text(
+                                              link.keys.elementAt(index),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => {Navigator.pop(context)},
+                              child: const Text('Close'),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.black),
+                        shadowColor: MaterialStateProperty.all(
+                            Theme.of(context).primaryColor),
+                        elevation: MaterialStateProperty.all(10),
+                        fixedSize: const MaterialStatePropertyAll(
+                          Size(60, 15),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.play_arrow_rounded,
+                            color: Theme.of(context).primaryColor,
+                            size: 30,
+                          ),
+                          Text(
+                            'Play',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  FadeInDown(
+                    delay: const Duration(milliseconds: 150),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Download $name Started',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            backgroundColor: Colors.black,
+                            duration: const Duration(milliseconds: 1500),
+                          ),
+                        );
+                        final temp = await listServers(widget.id);
+
+                        final link = await listStreams(temp.stream!);
+                        final downloadLink = temp.stream!.substring(
+                                0, temp.stream!.lastIndexOf('/') + 1) +
+                            link.values.elementAt(0);
+                        downloadFile(
+                            downloadLink,
+                            '',
+                            name,
+                            snapshot.data!.cover,
+                            temp.subtitle,
+                            false,
+                            context);
+                      },
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.black),
+                        shadowColor: MaterialStateProperty.all(
+                            Theme.of(context).primaryColor),
+                        elevation: MaterialStateProperty.all(10),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.download_rounded,
+                            color: Theme.of(context).primaryColor,
+                            size: 30,
+                          ),
+                          Text(
+                            'Download',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

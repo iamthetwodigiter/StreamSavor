@@ -9,6 +9,7 @@ class Movie {
   final String title;
   @HiveField(2)
   String? releaseDate;
+  @HiveField(3)
   String? thumb;
   String? type;
 

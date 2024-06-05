@@ -7,7 +7,6 @@ import 'package:streamsavor/pages/landing_page.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/repository/movies_repository.dart';
 import 'package:streamsavor/providers/anime_mode_provider.dart';
-
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(MovieAdapter());
@@ -25,7 +24,6 @@ void main() async {
       ),
     );
   });
-
   await getExternalStorageDirectory();
 }
 
