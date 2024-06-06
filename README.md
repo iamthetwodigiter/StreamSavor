@@ -16,6 +16,13 @@
 * Dubbed episodes available [if release, else subbed episodes]
 * Dropdown Menu for easy access of episodes for any animes with 24+ episodes, like One Piece [1000+ episodes]
 * Attractive UI
+<br></br>
+`Update 3.5.0`
+* Added Dark Theme and Light Theme switch
+* Added subtitle support for offline files
+* Added About Me section
+* Added removable search history record
+
 
 ### Screenshots:
 
