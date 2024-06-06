@@ -4,9 +4,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/landing_page.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/repository/movies_repository.dart';
 import 'package:streamsavor/providers/anime_mode_provider.dart';
+
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(MovieAdapter());
@@ -18,8 +20,11 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]).then((_) {
     runApp(
-      ChangeNotifierProvider(
-        create: (context) => AnimeModeProvider(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => AnimeModeProvider()),
+          ChangeNotifierProvider(create: (context) => DarkModeProvider()),
+        ],
         child: const MyApp(),
       ),
     );
@@ -33,13 +38,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     bool animeMode =
         Provider.of<AnimeModeProvider>(context, listen: true).animeMode;
+    bool darkMode =
+        Provider.of<DarkModeProvider>(context, listen: true).darkMode;
     return MaterialApp(
-      theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            color: Colors.black,
-          ),
-          primaryColor: animeMode ? Colors.purple : Colors.blueAccent,
-          fontFamily: 'Poppins'),
+      theme: darkMode
+          ? ThemeData(
+              appBarTheme: const AppBarTheme(
+                color: Colors.black,
+              ),
+              scaffoldBackgroundColor: Colors.black,
+              primaryColor: animeMode ? Colors.purpleAccent : Colors.blueAccent,
+              fontFamily: 'Poppins',
+            )
+          : ThemeData(
+              appBarTheme: const AppBarTheme(
+                color: Colors.white,
+              ),
+              scaffoldBackgroundColor: Colors.white,
+              primaryColor: animeMode ? Colors.deepPurple : Colors.indigoAccent,
+              fontFamily: 'Poppins',
+            ),
       home: const LandingPage(),
       debugShowCheckedModeBanner: false,
     );

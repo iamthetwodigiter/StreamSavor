@@ -41,9 +41,17 @@ class _FavoritesState extends State<Favorites> {
 
     if (favoritesBox.length == 0 && animeBox.length == 0) {
       return Scaffold(
-        backgroundColor: Colors.black,
         appBar: AppBar(
           toolbarHeight: 75,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+              color: Theme.of(context).primaryColor,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
           title: Row(
             children: [
               Expanded(
@@ -63,7 +71,6 @@ class _FavoritesState extends State<Favorites> {
               ),
             ],
           ),
-          backgroundColor: Colors.black,
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -96,7 +103,6 @@ class _FavoritesState extends State<Favorites> {
           }
 
           return Scaffold(
-            backgroundColor: Colors.black,
             appBar: AppBar(
               toolbarHeight: 75,
               title: Row(
@@ -118,7 +124,6 @@ class _FavoritesState extends State<Favorites> {
                   ),
                 ],
               ),
-              backgroundColor: Colors.black,
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -160,7 +165,7 @@ class _FavoritesState extends State<Favorites> {
                                         child: CachedNetworkImage(
                                           imageUrl:
                                               moviesThumb.elementAt(index),
-                                              height: size.height * 0.25,
+                                          height: size.height * 0.25,
                                           placeholder: (context, url) {
                                             return const Center(
                                                 child:
@@ -250,7 +255,7 @@ class _FavoritesState extends State<Favorites> {
                                           imageUrl: animeBox.values
                                               .elementAt(index)
                                               .poster,
-                                              height: size.height * 0.25,
+                                          height: size.height * 0.25,
                                         ),
                                       ),
                                       const SizedBox(height: 5),

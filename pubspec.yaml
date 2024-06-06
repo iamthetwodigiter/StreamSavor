@@ -2,7 +2,7 @@ name: streamsavor
 description: "A minimal movie and anime streaming app"
 publish_to: 'none'
 
-version: 3.2.0
+version: 3.5.0
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
@@ -25,6 +25,8 @@ dependencies:
   swipe_to: ^1.0.6
   appinio_video_player: ^1.2.2
   subtitle_wrapper_package: ^2.2.1
+  shared_preferences: ^2.2.3
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -38,6 +40,12 @@ flutter:
   assets:
     - assets/error.png
     - assets/anime.png
+    - assets/Prabhat.png
+    - assets/social/gmail.png
+    - assets/social/instagram.png
+    - assets/social/linkedin.png
+    - assets/social/github.png
+    - assets/social/google-pay.png
   fonts:
     - family: Poppins
       fonts:

@@ -26,19 +26,21 @@ Future<void> downloadFile(String url, String? anime, String name, String cover,
     final playlistFile = File('$filePath/$name.mp4');
 
     await FFmpegKit.execute("-i $url -c copy '${playlistFile.path}'");
-    print('Starting conversion');
     final command = '-i ${playlistFile.path.replaceAll(name, 'video')} -c:v libx264 -profile:v baseline -c:a copy ${playlistFile.path}';
     await FFmpegKit.execute(command);
-    print('Conversion Finished');
 
-    // if (vttUrl != 'none') {
-    //   final vttFile = File("${appStorage.path}/$name/$name.vtt");
-    //   await HttpClient().getUrl(Uri.parse(vttUrl)).then((request) {
-    //     return request.close();
-    //   }).then((response) async {
-    //     response.pipe(vttFile.openWrite());
-    //   });
-    // }
+    try {
+      final vttUrl = File("$filePath/info.txt").readAsLinesSync().last;
+      final vttFile = File("$filePath/$name.vtt");
+      await HttpClient().getUrl(Uri.parse(vttUrl)).then((request) {
+        return request.close();
+      }).then((response) async {
+        response.pipe(vttFile.openWrite());
+      });
+    } catch (e) {
+      final error = e.toString();
+      print('Error downloading vtt file: $error');
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

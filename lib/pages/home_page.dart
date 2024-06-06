@@ -23,7 +23,6 @@ class _HomePageState extends State<HomePage> {
     bool animeMode =
         Provider.of<AnimeModeProvider>(context, listen: true).animeMode;
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         title: FadeInDown(
           child: Text(

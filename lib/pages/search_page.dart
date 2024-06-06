@@ -4,15 +4,75 @@ import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/animes/anime_search_results.dart';
 import 'package:streamsavor/pages/movies/movies_search_results_page.dart';
 import 'package:streamsavor/providers/anime_mode_provider.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+class SearchHistory extends ValueNotifier<List<String>> {
+  SearchHistory() : super([]) {
+    initSearchHistory();
+  }
+
+  void addSearchQuery(String searchQuery) {
+    value.add(searchQuery);
+    notifyListeners();
+    _saveSearchHistory();
+  }
+
+  Future<void> initSearchHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedSearchHistory = prefs.getStringList('search_history');
+    if (storedSearchHistory != null) {
+      value = storedSearchHistory;
+    }
+  }
+
+  Future<void> _saveSearchHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('search_history', value);
+  }
+}
+
+class SearchHistoryProvider with ChangeNotifier {
+  final SearchHistory _searchHistory;
+
+  SearchHistoryProvider(this._searchHistory);
+
+  List<String> get searchHistory => _searchHistory.value;
+
+  void addSearchQuery(String searchQuery) {
+    _searchHistory.addSearchQuery(searchQuery);
+    notifyListeners();
+  }
+}
 
 class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
+  SearchPage({super.key});
+  final SearchHistory _searchHistory = SearchHistory();
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController searchController = TextEditingController();
+    _searchHistory.initSearchHistory();
+    return ChangeNotifierProvider(
+      create: (context) => SearchHistoryProvider(_searchHistory),
+      child: _SearchPage(),
+    );
+  }
+}
+
+class _SearchPage extends StatefulWidget {
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<_SearchPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final searchHistoryProvider = Provider.of<SearchHistoryProvider>(context);
+    bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         toolbarHeight: 75,
         title: Row(
@@ -22,15 +82,15 @@ class SearchPage extends StatelessWidget {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: FadeInDown(
                   child: TextField(
-                    controller: searchController,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    controller: _searchController,
+                    style: TextStyle(
+                      color: !darkMode ? Theme.of(context).primaryColor : Colors.white,
                     ),
                     decoration: InputDecoration(
-                      focusColor: Colors.white,
+                      focusColor: !darkMode ? Theme.of(context).primaryColor : Colors.white,
                       hintText: 'Search',
-                      hintStyle: const TextStyle(
-                        color: Colors.white,
+                      hintStyle: TextStyle(
+                      color: !darkMode ? Theme.of(context).primaryColor : Colors.white,
                       ),
                       contentPadding: const EdgeInsets.all(5),
                       prefixIcon: Icon(
@@ -60,6 +120,7 @@ class SearchPage extends StatelessWidget {
                       ),
                     ),
                     onSubmitted: (value) async {
+                      searchHistoryProvider.addSearchQuery(value.trimRight());
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -79,17 +140,80 @@ class SearchPage extends StatelessWidget {
           ],
         ),
       ),
-      body: Center(
-        child: FadeInUp(
-          child: Text(
-            'Search your content here',
-            style: TextStyle(
-              color: Theme.of(context).primaryColor,
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
+      body: Column(
+        mainAxisAlignment: searchHistoryProvider.searchHistory.isEmpty ? MainAxisAlignment.center : MainAxisAlignment.start,
+        children: [
+          searchHistoryProvider.searchHistory.isEmpty
+              ? FadeInUp(
+                  child: Center(
+                    child: Text(
+                      'Search your content here',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox(height: 20),
+          Consumer<SearchHistoryProvider>(
+            builder: (context, provider, child) {
+              return provider.searchHistory.isEmpty
+                  ? const SizedBox(height: 0)
+                  : Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: provider.searchHistory.length,
+                        itemBuilder: (context, index) {
+                          return FadeInRight(
+                            delay: Duration(milliseconds: index*100),
+                            child: ListTile(
+                              dense: true,
+                              title: Text(
+                                provider.searchHistory[index],
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    provider.searchHistory.removeAt(index);
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.cancel_rounded,
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        Provider.of<AnimeModeProvider>(context,
+                                                    listen: true)
+                                                .animeMode
+                                            ? AnimeSearchResult(
+                                                search: provider
+                                                    .searchHistory[index]
+                                                    .trimRight())
+                                            : MovieSearchResults(
+                                                search: provider
+                                                    .searchHistory[index]
+                                                    .trimRight()),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    );
+            },
           ),
-        ),
+        ],
       ),
     );
   }

@@ -2,7 +2,9 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/video_player.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/services/animes.dart';
 import 'package:streamsavor/services/downloader.dart';
@@ -61,6 +63,7 @@ class _AnimeDetailsState extends State<AnimeDetails> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
     // if (Hive.isBoxOpen('anime-fav')) {
     //   print('The anime-fav box is open');
     //   favoritesBox.close();
@@ -70,7 +73,6 @@ class _AnimeDetailsState extends State<AnimeDetails> {
     //   print('The anime-fav box is not open');
     // }
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -148,9 +150,13 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                   const SizedBox(height: 15),
                                   RichText(
                                     text: TextSpan(
-                                      style: const TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 247, 202, 255),
+                                      style: TextStyle(
+                                        color: darkMode
+                                            ? const Color.fromARGB(
+                                                255, 247, 202, 255)
+                                            : Theme.of(context)
+                                                .primaryColor
+                                                .withAlpha(200),
                                       ),
                                       children: [
                                         const TextSpan(
@@ -256,8 +262,10 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                       FadeInLeft(
                         child: Text(
                           animeData.description,
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 247, 202, 255),
+                          style: TextStyle(
+                            color: darkMode
+                                ? const Color.fromARGB(255, 247, 202, 255)
+                                : Theme.of(context).primaryColor.withAlpha(200),
                             fontSize: 15,
                           ),
                         ),
@@ -281,16 +289,18 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                               children: [
                                 DropdownButton<int>(
                                   dropdownColor:
-                                      const Color.fromARGB(186, 78, 47, 83),
+                                      const Color.fromARGB(216, 78, 47, 83),
                                   value: _currentPage,
                                   items: List.generate(totalPages, (index) {
                                     return DropdownMenuItem(
                                       value: index,
                                       child: Text(
                                         (index + 1).toString(),
-                                        style: const TextStyle(
-                                          color: Color.fromARGB(
-                                              255, 247, 202, 255),
+                                        style: TextStyle(
+                                          color: darkMode
+                                              ? const Color.fromARGB(
+                                                  255, 247, 202, 255)
+                                              : Colors.purpleAccent[100],
                                         ),
                                       ),
                                     );
@@ -327,9 +337,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                               width: double.infinity,
                               margin: const EdgeInsets.all(8),
                               padding: const EdgeInsets.all(10),
-                              decoration: const BoxDecoration(
-                                color: Color.fromARGB(186, 78, 47, 83),
-                                borderRadius: BorderRadius.all(
+                              decoration:  BoxDecoration(
+                                color: darkMode ? const Color.fromARGB(202, 78, 47, 83) : Theme.of(context).primaryColor.withAlpha(150),
+                                borderRadius: const BorderRadius.all(
                                   Radius.circular(8),
                                 ),
                               ),
@@ -355,9 +365,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                             children: [
                                               Text(
                                                 'Episode: ${items.number}',
-                                                style: const TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 235, 119, 255),
+                                                style: TextStyle(
+                                                  color: darkMode ? const Color.fromARGB(
+                                                      255, 235, 119, 255) : Theme.of(context).primaryColor,
                                                   fontSize: 18,
                                                 ),
                                               ),
@@ -366,9 +376,9 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                                 items.title,
                                                 softWrap: true,
                                                 maxLines: 3,
-                                                style: const TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 235, 119, 255),
+                                                style: TextStyle(
+                                                    color: darkMode ? const Color.fromARGB(
+                                                        255, 235, 119, 255) : Theme.of(context).primaryColor,
                                                     fontSize: 12),
                                                 textAlign: TextAlign.center,
                                               ),
@@ -382,10 +392,10 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                                               animeData.dub!
                                                       ? 'Dub'
                                                       : 'Sub'),
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontSize: 12,
-                                                    color: Color.fromARGB(
-                                                        255, 247, 202, 255),
+                                                    color:  darkMode ? const Color.fromARGB(
+                                                        255, 247, 202, 255) : Theme.of(context).primaryColor,
                                                   ),
                                                 ),
                                               ),
@@ -457,7 +467,8 @@ class _AnimeDetailsState extends State<AnimeDetails> {
                                                                             .streamingLink,
                                                                     subUrl: streamingLinks
                                                                         .subUrl,
-                                                                        name: items.title,
+                                                                    name: items
+                                                                        .title,
                                                                   ),
                                                                 ),
                                                               );

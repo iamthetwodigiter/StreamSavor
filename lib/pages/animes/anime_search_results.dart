@@ -1,7 +1,9 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/animes/anime_details.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/services/animes.dart';
 
@@ -19,8 +21,9 @@ class _AnimeSearchResultState extends State<AnimeSearchResult> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
+
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -38,13 +41,21 @@ class _AnimeSearchResultState extends State<AnimeSearchResult> {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: TextField(
                   controller: _searchController,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: !darkMode
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
                   ),
                   decoration: InputDecoration(
-                    focusColor: Colors.white,
+                    focusColor: !darkMode
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
                     hintText: 'Search',
-                    hintStyle: const TextStyle(color: Colors.white),
+                    hintStyle: TextStyle(
+                      color: !darkMode
+                          ? Theme.of(context).primaryColor
+                          : Colors.white,
+                    ),
                     contentPadding: const EdgeInsets.all(5),
                     prefixIcon: Icon(
                       Icons.search,
@@ -87,7 +98,6 @@ class _AnimeSearchResultState extends State<AnimeSearchResult> {
             ),
           ],
         ),
-        backgroundColor: Colors.black,
       ),
       body: Column(
         children: [
@@ -101,6 +111,20 @@ class _AnimeSearchResultState extends State<AnimeSearchResult> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final animes = snapshot.data ?? [];
+                      if (animes.isEmpty) {
+                        return Scaffold(
+                          body: Center(
+                            child: Text(
+                              'No Search Result Found',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                       return ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: animes.length,
@@ -145,13 +169,16 @@ class _AnimeSearchResultState extends State<AnimeSearchResult> {
                                         ),
                                       ),
                                     ),
-                                    Text(
-                                      anime.name,
-                                      style: TextStyle(
-                                          color: Theme.of(context).primaryColor,
-                                          fontSize: 13.5,
-                                          overflow: TextOverflow.fade),
-                                      maxLines: 3,
+                                    Flexible(
+                                      child: Text(
+                                        anime.name,
+                                        style: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            fontSize: 13.5,
+                                            overflow: TextOverflow.fade),
+                                        maxLines: 3,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -174,7 +201,6 @@ class _AnimeSearchResultState extends State<AnimeSearchResult> {
                       );
                     } else if (snapshot.hasError) {
                       return Scaffold(
-                        backgroundColor: Colors.black,
                         body: Center(
                           child: Text(
                             'No Search Result Found',

@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/video_player.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:swipe_to/swipe_to.dart';
 
 class DownloadsPage extends StatefulWidget {
@@ -19,10 +21,11 @@ class _DownloadsPageState extends State<DownloadsPage> {
     bool isAnime = false;
     File file = File('');
     final coverUrl = <String>[];
-    String subUrl = '';
+    String vttFile = '';
     final name = <String>[];
     String videoFile = '';
     final size = MediaQuery.of(context).size;
+    bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
 
     List<Directory> getDirectory() {
       late List<Directory> dirs = [];
@@ -55,11 +58,30 @@ class _DownloadsPageState extends State<DownloadsPage> {
       return fileSet;
     }
 
+    Set<File> getvttFiles(String dir) {
+      final vttfileSet = <File>{};
+      List<FileSystemEntity> files = Directory(dir).listSync(recursive: true);
+      for (FileSystemEntity file in files) {
+        if (file.toString().contains('vtt')) {
+          vttfileSet.add(File(file.path));
+        }
+      }
+      return vttfileSet;
+    }
+
     var dirs = getDirectory();
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         toolbarHeight: 75,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_rounded,
+            color: Theme.of(context).primaryColor,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Row(
           children: [
             Expanded(
@@ -79,7 +101,6 @@ class _DownloadsPageState extends State<DownloadsPage> {
             ),
           ],
         ),
-        backgroundColor: Colors.black,
       ),
       body: dirs.isNotEmpty
           ? ListView.builder(
@@ -89,12 +110,11 @@ class _DownloadsPageState extends State<DownloadsPage> {
                 if (isAnime) {
                   file = File('${dirs[index].path}/info.txt');
                   coverUrl.add(file.readAsLinesSync().first);
-                  subUrl = file.readAsLinesSync().last;
                   name.add(dirs[index].path.split('/').last);
                 } else {
                   file = File('${dirs[index].path}/info.txt');
                   coverUrl.add(file.readAsLinesSync().first);
-                  subUrl = file.readAsLinesSync().last;
+                  vttFile = '${dirs[index].path}/$name.vtt';
                   name.add(dirs[index].path.split('/').last);
                   videoFile = '${dirs[index].path}/$name.mp4';
                 }
@@ -164,6 +184,8 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                       builder: ((context) {
                                         var videoFiles =
                                             getFiles(dirs[index].path);
+                                        var vttFiles =
+                                            getvttFiles(dirs[index].path);
                                         final cover = coverUrl.elementAt(index);
                                         return Scaffold(
                                           key: _scaffoldKey,
@@ -185,7 +207,6 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                   fontWeight: FontWeight.bold),
                                             ),
                                           ),
-                                          backgroundColor: Colors.black,
                                           body: ListView.builder(
                                               itemCount: videoFiles.length,
                                               itemBuilder: (context, index) {
@@ -279,7 +300,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                                           MaterialPageRoute(
                                                                             builder: (context) =>
                                                                                 DefaultPlayer(
-                                                                              subUrl: '',
+                                                                              subUrl: vttFiles.elementAt(index).path,
                                                                               videoUrl: videoFiles.elementAt(index).path,
                                                                               name: videoFiles.elementAt(index).path.split('/').last,
                                                                             ),
@@ -288,8 +309,9 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                                       },
                                                                       style:
                                                                           ButtonStyle(
-                                                                        backgroundColor:
-                                                                            MaterialStateProperty.all(Colors.black),
+                                                                        backgroundColor: MaterialStateProperty.all(darkMode
+                                                                            ? Colors.black
+                                                                            : Colors.grey[400]),
                                                                         shadowColor:
                                                                             MaterialStateProperty.all(Theme.of(context).primaryColor),
                                                                         elevation:
@@ -324,6 +346,8 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                                           () async {
                                                                         File(videoFiles.elementAt(index).path)
                                                                             .delete();
+                                                                        File(vttFiles.elementAt(index).path)
+                                                                            .delete();
 
                                                                         final appStorage =
                                                                             File(videoFiles.elementAt(index).path).parent;
@@ -354,8 +378,9 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                                       },
                                                                       style:
                                                                           ButtonStyle(
-                                                                        backgroundColor:
-                                                                            MaterialStateProperty.all(Colors.black),
+                                                                        backgroundColor: MaterialStateProperty.all(darkMode
+                                                                            ? Colors.black
+                                                                            : Colors.grey[400]),
                                                                         shadowColor:
                                                                             MaterialStateProperty.all(Theme.of(context).primaryColor),
                                                                         elevation:
@@ -435,10 +460,12 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                           MaterialPageRoute(
                                                             builder: (context) =>
                                                                 DefaultPlayer(
-                                                              subUrl: subUrl,
+                                                              subUrl: vttFile,
                                                               videoUrl:
                                                                   videoFile,
-                                                                  name: name.elementAt(index),
+                                                              name: name
+                                                                  .elementAt(
+                                                                      index),
                                                             ),
                                                           ),
                                                         );
@@ -482,7 +509,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                       onPressed: () async {
                                                         File(videoFile)
                                                             .delete();
-                                                        File(subUrl).delete();
+                                                        File(vttFile).delete();
                                                         file.delete();
                                                         File(videoFile)
                                                             .parent
@@ -568,9 +595,11 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                         MaterialPageRoute(
                                                           builder: (context) =>
                                                               DefaultPlayer(
-                                                            subUrl: subUrl,
+                                                            subUrl: vttFile,
                                                             videoUrl: videoFile,
-                                                            name: name.elementAt(index),
+                                                            name:
+                                                                name.elementAt(
+                                                                    index),
                                                           ),
                                                         ),
                                                       );
@@ -613,7 +642,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                   ElevatedButton(
                                                     onPressed: () async {
                                                       File(videoFile).delete();
-                                                      File(subUrl).delete();
+                                                      File(vttFile).delete();
                                                       file.delete();
                                                       File(videoFile)
                                                           .parent

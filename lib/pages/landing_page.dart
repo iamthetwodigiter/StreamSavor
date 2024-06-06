@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:streamsavor/pages/downloads_page.dart';
-import 'package:streamsavor/pages/favorites_page.dart';
+import 'package:provider/provider.dart';
+import 'package:streamsavor/pages/profile.dart';
 import 'package:streamsavor/pages/home_page.dart';
 import 'package:streamsavor/pages/search_page.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -17,17 +18,17 @@ class _LandingPageState extends State<LandingPage> {
   // List of Screens
   final List<Widget> _screens = [
     const HomePage(),
-    const SearchPage(),
-    const DownloadsPage(),
-    const Favorites(),
+    SearchPage(),
+    Profile(),
   ];
 
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    bool darkMode =
+        Provider.of<DarkModeProvider>(context, listen: true).darkMode;
     return Scaffold(
-      backgroundColor: Colors.black,
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
@@ -39,10 +40,11 @@ class _LandingPageState extends State<LandingPage> {
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
+        backgroundColor: darkMode ? Colors.black : Colors.white,
         currentIndex: _currentIndex,
         selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: darkMode ? Colors.grey : Colors.grey[600],
+
         selectedLabelStyle:
             const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
         unselectedLabelStyle:
@@ -57,23 +59,22 @@ class _LandingPageState extends State<LandingPage> {
           });
           _pageController.jumpToPage(index);
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_rounded),
-              label: 'Home',
-              backgroundColor: Colors.black),
+            icon: const Icon(Icons.home_rounded),
+            label: 'Home',
+            backgroundColor: darkMode ? Colors.black : Colors.white,
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.search_rounded),
-              label: 'Search',
-              backgroundColor: Colors.black),
+            icon: const Icon(Icons.search_rounded),
+            label: 'Search',
+            backgroundColor: darkMode ? Colors.black : Colors.white,
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.download_rounded),
-              label: 'Downloads',
-              backgroundColor: Colors.black),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_rounded),
-              label: 'Favorites',
-              backgroundColor: Colors.black),
+            icon: const Icon(Icons.person_rounded),
+            label: 'Profile',
+            backgroundColor: darkMode ? Colors.black : Colors.white,
+          ),
         ],
       ),
     );

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:subtitle_wrapper_package/subtitle_wrapper_package.dart';
 
 class DefaultPlayer extends StatefulWidget {
@@ -29,10 +31,20 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
   @override
   void initState() {
     super.initState();
-    subtitleController = SubtitleController(
-      subtitleUrl: widget.subUrl,
-      subtitleType: SubtitleType.webvtt,
-    );
+    if (widget.subUrl.contains('storage')) {
+      final vttfile = File(widget.subUrl);
+      final vttfilecontent = vttfile.readAsStringSync();
+      subtitleController = SubtitleController(
+        subtitlesContent: vttfilecontent,
+        subtitleType: SubtitleType.webvtt,
+      );
+    } else {
+      subtitleController = SubtitleController(
+        subtitleUrl: widget.subUrl,
+        subtitleType: SubtitleType.webvtt,
+      );
+    }
+    
     if (widget.videoUrl.contains('storage')) {
       _videoPlayerController = VideoPlayerController.file(
         File(widget.videoUrl),
@@ -62,7 +74,6 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         leading: IconButton(
           onPressed: Navigator.of(context).pop,
@@ -73,7 +84,11 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
         ),
         title: Text(
           widget.name,
-          style: TextStyle(color: Theme.of(context).canvasColor),
+          style: TextStyle(
+            color: Provider.of<DarkModeProvider>(context).darkMode
+                ? Colors.white
+                : Theme.of(context).primaryColor,
+          ),
         ),
       ),
       body: SafeArea(
@@ -81,12 +96,14 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             SubtitleWrapper(
+              
               videoPlayerController: _videoPlayerController,
               subtitleController: subtitleController,
               subtitleStyle: const SubtitleStyle(
                 textColor: Colors.white,
                 fontSize: 12,
                 hasBorder: true,
+                position: SubtitlePosition(bottom: 0),
               ),
               videoChild: CustomVideoPlayer(
                 customVideoPlayerController: _customVideoPlayerController,

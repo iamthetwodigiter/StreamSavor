@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/services/movies.dart';
 import 'package:streamsavor/pages/movies/movie_details_page.dart';
 
@@ -14,6 +16,8 @@ class MovieTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
+
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: SizedBox(
@@ -74,10 +78,11 @@ class MovieTiles extends StatelessWidget {
                                   ),
                                   Text(
                                     movie.title,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         // color: Theme.of(context).primaryColor,
-                                        color: Color.fromARGB(255, 189, 213, 255),
+                                        color: darkMode ?const Color.fromARGB(255, 189, 213, 255) : Theme.of(context).primaryColor,
                                         fontSize: 12,
+                                        fontWeight: FontWeight.bold,
                                         overflow: TextOverflow.fade),
                                     maxLines: 2,
                                   ),
@@ -107,7 +112,6 @@ class MovieTiles extends StatelessWidget {
             } else if (snapshot.hasError) {
               // return Scaffold(body: Text(snapshot.error.toString()));
               return Scaffold(
-                backgroundColor: Colors.black,
                 body: Center(
                   child: Text(
                     'Failed to load data!!\nPlease reload the app',
@@ -121,7 +125,6 @@ class MovieTiles extends StatelessWidget {
               );
             } else {
               return Scaffold(
-                backgroundColor: Colors.black,
                 body: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

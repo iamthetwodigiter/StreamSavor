@@ -1,7 +1,9 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/animes/anime_details.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/services/animes.dart';
 
@@ -12,6 +14,8 @@ class AnimeTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+        bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
+
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
       child: SizedBox(
@@ -67,9 +71,9 @@ class AnimeTiles extends StatelessWidget {
                               ),
                               Text(
                                 anime.name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     // color: Theme.of(context).primaryColor,
-                                    color: Color.fromARGB(255, 247, 202, 255),
+                                    color: darkMode ? const Color.fromARGB(255, 247, 202, 255) : Theme.of(context).primaryColor,
                                     fontSize: 12,
                                     overflow: TextOverflow.fade),
                                 maxLines: 2,
@@ -92,7 +96,6 @@ class AnimeTiles extends StatelessWidget {
                     );
                   } else if (snapshot.hasError) {
                     return Scaffold(
-                      backgroundColor: Colors.black,
                       body: Center(
                         child: Text(
                           'Failed to load data!!',
@@ -106,7 +109,6 @@ class AnimeTiles extends StatelessWidget {
                     );
                   } else {
                     return Scaffold(
-                      backgroundColor: Colors.black,
                       body: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -127,7 +129,6 @@ class AnimeTiles extends StatelessWidget {
             } else if (snapshot.hasError) {
               // return Scaffold(body: Text(snapshot.error.toString()));
               return Scaffold(
-                backgroundColor: Colors.black,
                 body: Center(
                   child: Text(
                     'Failed to load data!!\nPlease reload the app',
@@ -141,7 +142,6 @@ class AnimeTiles extends StatelessWidget {
               );
             } else {
               return Scaffold(
-                backgroundColor: Colors.black,
                 body: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/services/movies.dart';
 import 'package:streamsavor/pages/movies/movie_details_page.dart';
 import 'package:streamsavor/repository/movies_repository.dart';
@@ -26,8 +28,9 @@ class _SearchResultsState extends State<MovieSearchResults> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
+
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -45,40 +48,42 @@ class _SearchResultsState extends State<MovieSearchResults> {
                 margin: const EdgeInsets.only(top: 10, bottom: 10),
                 child: TextField(
                   controller: _searchController,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                    focusColor: Colors.white,
-                    hintText: 'Search',
-                    hintStyle: const TextStyle(color: Colors.white),
-                    contentPadding: const EdgeInsets.all(5),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Theme.of(context).primaryColor,
+                  style: TextStyle(
+                      color: !darkMode ? Theme.of(context).primaryColor : Colors.white,
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(15),
+                    decoration: InputDecoration(
+                      focusColor: !darkMode ? Theme.of(context).primaryColor : Colors.white,
+                      hintText: 'Search',
+                      hintStyle: TextStyle(
+                      color: !darkMode ? Theme.of(context).primaryColor : Colors.white,
                       ),
-                      borderSide: BorderSide(
-                          width: 0.25, color: Theme.of(context).primaryColor),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(15),
+                      contentPadding: const EdgeInsets.all(5),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).primaryColor,
                       ),
-                      borderSide: BorderSide(
-                          width: 0.25, color: Theme.of(context).primaryColor),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(15),
+                      border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                        borderSide: BorderSide(
+                            width: 0.25, color: Theme.of(context).primaryColor),
                       ),
-                      borderSide: BorderSide(
-                          width: 0.25, color: Theme.of(context).primaryColor),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                        borderSide: BorderSide(
+                            width: 0.25, color: Theme.of(context).primaryColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(15),
+                        ),
+                        borderSide: BorderSide(
+                            width: 0.25, color: Theme.of(context).primaryColor),
+                      ),
                     ),
-                  ),
                   onSubmitted: (value) async {
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.push(
@@ -94,7 +99,6 @@ class _SearchResultsState extends State<MovieSearchResults> {
             ),
           ],
         ),
-        backgroundColor: Colors.black,
       ),
       body: Column(
         children: [
@@ -152,14 +156,16 @@ class _SearchResultsState extends State<MovieSearchResults> {
                                         ),
                                       ),
                                     ),
-                                    Text(
-                                      movie.title,
-                                      style: TextStyle(
-                                          color: Theme.of(context).primaryColor,
-                                          fontSize: 13.5,
-                                          overflow: TextOverflow.fade),
-                                      softWrap: true,
-                                      maxLines: 3,
+                                    Flexible(
+                                      child: Text(
+                                        movie.title,
+                                        style: TextStyle(
+                                            color: Theme.of(context).primaryColor,
+                                            fontSize: 13.5,
+                                            overflow: TextOverflow.fade),
+                                        softWrap: true,
+                                        maxLines: 3,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -182,7 +188,6 @@ class _SearchResultsState extends State<MovieSearchResults> {
                       );
                     } else if (snapshot.hasError) {
                       return Scaffold(
-                        backgroundColor: Colors.black,
                         body: Center(
                           child: Text(
                             'No Search Result Found',
