@@ -10,19 +10,22 @@
 * Realtime Movie Details are shown on tapping on the movie card
 * Available servers are listed for 1080p streaming
 * Movies can be added to Favorites and can be accessed from the Favorites tab
-<br></br>
+  </br>
 `Update 3.0.0`
 * Latest, Trending and Top Animes are displayed on the Anime Homepage
 * Dubbed episodes available [if release, else subbed episodes]
 * Dropdown Menu for easy access of episodes for any animes with 24+ episodes, like One Piece [1000+ episodes]
 * Attractive UI
-<br></br>
+  </br>
 `Update 3.5.0`
 * Added Dark Theme and Light Theme switch
 * Added subtitle support for offline files
 * Added About Me section
 * Added removable search history record
-
+  </br>
+`Update 3.6.0`
+* Added notification support download progress
+* Few minor UI changes
 
 ### Screenshots:
 
