@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:streamsavor/providers/dark_mode_provider.dart';
-import 'package:streamsavor/services/movies.dart';
+import 'package:streamsavor/service/movies.dart';
 import 'package:streamsavor/pages/movies/movie_details_page.dart';
 import 'package:streamsavor/repository/movies_repository.dart';
 

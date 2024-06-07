@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/animes/anime_details.dart';
 import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
-import 'package:streamsavor/services/animes.dart';
+import 'package:streamsavor/service/animes.dart';
 
 class AnimeSearchResult extends StatefulWidget {
   final String search;

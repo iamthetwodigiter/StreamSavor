@@ -42,6 +42,5 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# These files are added to gitignore as everytime removing the api links before pushing the code to github is hectic
-/lib/services/animes.dart
-/lib/services/movies.dart
+/lib/service/animes.dart
+/lib/service/movies.dart

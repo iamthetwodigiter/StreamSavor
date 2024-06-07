@@ -97,7 +97,8 @@ Future<void> downloadFile(String url, String? anime, String name, String cover,
         } 
       });
     });
-
+    //just a random code to remove the weird warning
+    timer!.isActive;
     final command =
         '-i ${playlistFile.path.replaceAll(name, 'video')} -c:v libx264 -profile:v baseline -c:a copy ${playlistFile.path}';
 

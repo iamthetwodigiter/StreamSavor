@@ -3,15 +3,30 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:streamsavor/providers/dark_mode_provider.dart';
-import 'package:streamsavor/services/movies.dart';
+import 'package:streamsavor/service/movies.dart';
 import 'package:streamsavor/pages/movies/movie_details_page.dart';
 
-class MovieTiles extends StatelessWidget {
+class MovieTiles extends StatefulWidget {
   final String endpoint;
   const MovieTiles({
     super.key,
     required this.endpoint,
   });
+
+  @override
+  State<MovieTiles> createState() => _MovieTilesState();
+}
+
+class _MovieTilesState extends State<MovieTiles> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +38,7 @@ class MovieTiles extends StatelessWidget {
       child: SizedBox(
         height: size.height * 0.32,
         child: FutureBuilder<List<dynamic>>(
-          future: newData(endpoint),
+          future: newData(widget.endpoint),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return ListView.builder(

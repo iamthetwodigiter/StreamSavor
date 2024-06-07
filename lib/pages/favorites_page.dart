@@ -6,7 +6,7 @@ import 'package:streamsavor/pages/animes/anime_details.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/pages/movies/movie_details_page.dart';
 import 'package:streamsavor/repository/movies_repository.dart';
-import 'package:streamsavor/services/movies.dart';
+import 'package:streamsavor/service/movies.dart';
 
 class Favorites extends StatefulWidget {
   const Favorites({super.key});

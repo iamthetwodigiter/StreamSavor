@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/video_player.dart';
 import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/repository/anime_repository.dart';
-import 'package:streamsavor/services/animes.dart';
-import 'package:streamsavor/services/downloader.dart';
+import 'package:streamsavor/service/animes.dart';
+import 'package:streamsavor/service/downloader.dart';
 
 class AnimeDetails extends StatefulWidget {
   final String id;
