@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:streamsavor/pages/landing_page.dart';
 import 'package:streamsavor/providers/dark_mode_provider.dart';
@@ -9,27 +10,51 @@ import 'package:streamsavor/repository/anime_repository.dart';
 import 'package:streamsavor/repository/movies_repository.dart';
 import 'package:streamsavor/providers/anime_mode_provider.dart';
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(MovieAdapter());
   await Hive.openBox<Movie>('movies-fav');
   Hive.registerAdapter(AnimeCardsAdapter());
   await Hive.openBox<AnimeCards>('anime-fav');
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]).then((_) {
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context) => AnimeModeProvider()),
-          ChangeNotifierProvider(create: (context) => DarkModeProvider()),
-        ],
-        child: const MyApp(),
-      ),
-    );
-  });
-  await getExternalStorageDirectory();
+  WidgetsFlutterBinding.ensureInitialized();
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+  );
+
+  flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]).then((_) {
+  //   runApp(
+  //     MultiProvider(
+  //       providers: [
+  //         ChangeNotifierProvider(create: (context) => AnimeModeProvider()),
+  //         ChangeNotifierProvider(create: (context) => DarkModeProvider()),
+  //       ],
+  //       child: const MyApp(),
+  //     ),
+  //   );
+  // });
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AnimeModeProvider()),
+        ChangeNotifierProvider(create: (context) => DarkModeProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
+
+  await Permission.notification.request();
+  if (await Permission.videos.request().isDenied) {
+    await Permission.storage.request();
+  }
+  getExternalStorageDirectory();
 }
 
 class MyApp extends StatelessWidget {

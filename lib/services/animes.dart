@@ -4,7 +4,7 @@ import 'package:streamsavor/repository/anime_repository.dart';
 
 Future<List<AnimeCards>> spotlightAnime(String reqData) async {
   final res = await http.get(
-    Uri.parse(''),
+    Uri.parse('https://streamsavor-anime-api.vercel.app/anime/home'),
   );
 
   final data = jsonDecode(res.body);
@@ -17,7 +17,7 @@ Future<List<AnimeCards>> spotlightAnime(String reqData) async {
 
 Future<AnimeInfo> fetchAnime(String id) async {
   final infoRes = await http.get(
-      Uri.parse(''));
+      Uri.parse('https://streamsavor-anime-api.vercel.app/anime/info?id=$id'));
   final infoData = jsonDecode(infoRes.body)['anime'];
   final animeInfo = AnimeInfo(
     id: infoData['info']['id'],
@@ -38,7 +38,7 @@ Future<AnimeInfo> fetchAnime(String id) async {
     episodes: [],
   );
   final episodesRes = await http.get(
-      Uri.parse(''));
+      Uri.parse('https://streamsavor-anime-api.vercel.app/anime/episodes/$id'));
   final episodesData = jsonDecode(episodesRes.body);
   animeInfo.episodeCount = episodesData['totalEpisodes'];
   for (var episode in episodesData['episodes']) {
@@ -59,10 +59,10 @@ Future<StreamingLinks> fetchStreamingLinks(String episodeID) async {
   bool isDub = true;
   String subUrl = '';
   final res = await http.get(Uri.parse(
-      ''));
+      'https://streamsavor-anime-api.vercel.app/anime/episode-srcs?id=${episodeID}&category=sub'));
   final data = jsonDecode(res.body);
   final res2 = await http.get(Uri.parse(
-      ''));
+      'https://streamsavor-anime-api.vercel.app/anime/episode-srcs?id=${episodeID}&category=dub'));
   final data2 = jsonDecode(res2.body);
   if (data2['status'] == 500) {
     streamingLink = data['sources'][0]['url'];
@@ -85,7 +85,7 @@ Future<StreamingLinks> fetchStreamingLinks(String episodeID) async {
 
 Future<List<SearchAnime>> searchAnime(String search) async {
   final res = await http.get(Uri.parse(
-      ''));
+      'https://streamsavor-anime-api.vercel.app/anime/search?q=${search.replaceAll(' ', '-')}'));
   final data = jsonDecode(res.body);
   final searchResults = <SearchAnime>[];
   for (final search in data['animes']) {

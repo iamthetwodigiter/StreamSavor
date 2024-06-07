@@ -26,7 +26,6 @@ class _DownloadsPageState extends State<DownloadsPage> {
     String videoFile = '';
     final size = MediaQuery.of(context).size;
     bool darkMode = Provider.of<DarkModeProvider>(context).darkMode;
-
     List<Directory> getDirectory() {
       late List<Directory> dirs = [];
       final appStorage = Directory(
@@ -165,7 +164,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
                       );
                     },
                     child: Container(
-                      height: isAnime ? size.height * 0.25 : size.height * 0.2,
+                      height: size.height * 0.2,
                       margin: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
@@ -199,12 +198,17 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                     .primaryColor,
                                               ),
                                             ),
-                                            title: Text(
-                                              name.elementAt(index),
-                                              style: TextStyle(
+                                            title: Flexible(
+                                              child: Text(
+                                                name.elementAt(index),
+                                                style: TextStyle(
                                                   color: Theme.of(context)
                                                       .primaryColor,
-                                                  fontWeight: FontWeight.bold),
+                                                  fontWeight: FontWeight.bold,
+                                                  overflow: TextOverflow.fade,
+                                                ),
+                                                maxLines: 3,
+                                              ),
                                             ),
                                           ),
                                           body: ListView.builder(
@@ -408,7 +412,7 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                                       ),
                                                                     ),
                                                                   ],
-                                                                )
+                                                                ),
                                                               ],
                                                             ),
                                                           ),
@@ -438,13 +442,15 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            name.elementAt(index),
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: isAnime ? 20 : 25,
+                                          Flexible(
+                                            child: Text(
+                                              name.elementAt(index),
+                                              style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: isAnime ? 20 : 25,
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 10),

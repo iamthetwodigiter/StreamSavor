@@ -588,10 +588,10 @@ class _AnimeDetailsState extends State<AnimeDetails> {
             }
 
             return Text(
-              'Unable to Fetch Data!!',
+              'Unable to Fetch Data!!\n${snapshot.error}',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
-                fontSize: 64,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
             );

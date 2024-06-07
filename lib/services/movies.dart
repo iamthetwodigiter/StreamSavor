@@ -5,7 +5,7 @@ import 'package:streamsavor/repository/movies_repository.dart';
 // Urls have been removed to prevent API misuse, since usage is limited [unless you choose to sponsor this project...]
 Future<List<Movie>> searchMovies(String search) async {
   final res = await http.get(
-    Uri.parse(''),
+    Uri.parse('https://www.omdbapi.com/?s=$search&apikey=1241dbb8'),
   );
 
   final data = jsonDecode(res.body);
@@ -18,7 +18,7 @@ Future<List<Movie>> searchMovies(String search) async {
 
 Future<MovieInfo> moviesInfo(String id) async {
   final res = await http.get(
-    Uri.parse(''),
+    Uri.parse('https://www.omdbapi.com/?i=$id&apikey=1241dbb8'),
   );
 
   final data = jsonDecode(res.body);
@@ -28,7 +28,7 @@ Future<MovieInfo> moviesInfo(String id) async {
 }
 
 Future<ServerData> listServers(String id) async {
-  final url = Uri.parse('');
+  final url = Uri.parse('https://vid-src-api.vercel.app/vidsrc/$id');
   try {
     final response = await http.get(url);
     if (response.statusCode != 200) {
@@ -82,7 +82,7 @@ Future<List<dynamic>> newData(String endpoint) async {
 
   for (int i = 1; i < 6; i++) {
     final response =
-        await http.get(Uri.parse(''));
+        await http.get(Uri.parse('https://vidsrc.to/vapi/movie/$endpoint/$i'));
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
       final movies = jsonData['result']['items'];
@@ -105,7 +105,7 @@ Future<List<dynamic>> newData(String endpoint) async {
 
 Future<String?> posterUrl(String imdbID) async {
   final res = await http
-      .get(Uri.parse(''));
+      .get(Uri.parse('http://www.omdbapi.com/?i=$imdbID&apikey=1241dbb8'));
   final details = jsonDecode(res.body);
   if (details['Response'] == 'True') {
     return details['Poster'];

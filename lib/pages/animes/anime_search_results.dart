@@ -173,10 +173,10 @@ class _AnimeSearchResultState extends State<AnimeSearchResult> {
                                       child: Text(
                                         anime.name,
                                         style: TextStyle(
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                            fontSize: 13.5,
-                                            overflow: TextOverflow.fade),
+                                          color: Theme.of(context).primaryColor,
+                                          fontSize: 13.5,
+                                          overflow: TextOverflow.fade,
+                                        ),
                                         maxLines: 3,
                                       ),
                                     ),
