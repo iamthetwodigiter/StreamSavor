@@ -59,3 +59,4 @@
 * Series Support
 * ~Anime Support~ `Added`
 * ~Download Support~ `Added`
+* Login support to save userdata to cloud rather than local storage
