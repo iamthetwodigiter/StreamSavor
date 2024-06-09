@@ -27,6 +27,8 @@
 * Added notification support download progress
 * Few minor UI changes
 
+![GitHub All Releases](https://img.shields.io/github/downloads/iamthetwodigiter/StreamSavor/total?label=Downloads&logo=GitHub)
+
 ### Screenshots:
 
 <div>
