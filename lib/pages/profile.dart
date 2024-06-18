@@ -13,7 +13,6 @@ void launchBrowser(String url, BuildContext context) async {
     try {
       await launchUrl(link, mode: LaunchMode.platformDefault);
     } catch (e) {
-      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -187,30 +186,40 @@ class Profile extends StatelessWidget {
             },
           ),
           Flexible(child: Container()),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Column(
             children: [
-              Text("Created with ",
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: darkMode
-                          ? Theme.of(context).primaryColor
-                          : Colors.black)),
-              Icon(Icons.favorite, color: Theme.of(context).primaryColor),
-              Text(" by",
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: darkMode
-                          ? Theme.of(context).primaryColor
-                          : Colors.black)),
-              TextButton(
-                  onPressed: () {
-                    launchBrowser(
-                        'https://www.github.com/iamthetwodigiter', context);
-                  },
-                  child: Text('thetwodigiter',
+              Text(
+                'App version : 4.0.0',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Created with ",
                       style: TextStyle(
-                          fontSize: 12, color: Colors.redAccent[400])))
+                          fontSize: 12,
+                          color: darkMode
+                              ? Theme.of(context).primaryColor
+                              : Colors.black)),
+                  Icon(Icons.favorite, color: Theme.of(context).primaryColor),
+                  Text(" by",
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: darkMode
+                              ? Theme.of(context).primaryColor
+                              : Colors.black)),
+                  TextButton(
+                      onPressed: () {
+                        launchBrowser(
+                            'https://www.github.com/iamthetwodigiter', context);
+                      },
+                      child: Text('thetwodigiter',
+                          style: TextStyle(
+                              fontSize: 12, color: Colors.redAccent[400])))
+                ],
+              ),
             ],
           ),
         ],

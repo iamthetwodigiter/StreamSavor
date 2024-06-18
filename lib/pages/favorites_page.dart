@@ -105,6 +105,15 @@ class _FavoritesState extends State<Favorites> {
           return Scaffold(
             appBar: AppBar(
               toolbarHeight: 75,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios_rounded,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
               title: Row(
                 children: [
                   Expanded(

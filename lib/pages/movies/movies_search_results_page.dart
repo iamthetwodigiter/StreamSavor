@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:streamsavor/pages/movies/series_details_page.dart';
 import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:streamsavor/service/movies.dart';
 import 'package:streamsavor/pages/movies/movie_details_page.dart';
@@ -49,41 +50,47 @@ class _SearchResultsState extends State<MovieSearchResults> {
                 child: TextField(
                   controller: _searchController,
                   style: TextStyle(
-                      color: !darkMode ? Theme.of(context).primaryColor : Colors.white,
+                    color: !darkMode
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    focusColor: !darkMode
+                        ? Theme.of(context).primaryColor
+                        : Colors.white,
+                    hintText: 'Search',
+                    hintStyle: TextStyle(
+                      color: !darkMode
+                          ? Theme.of(context).primaryColor
+                          : Colors.white,
                     ),
-                    decoration: InputDecoration(
-                      focusColor: !darkMode ? Theme.of(context).primaryColor : Colors.white,
-                      hintText: 'Search',
-                      hintStyle: TextStyle(
-                      color: !darkMode ? Theme.of(context).primaryColor : Colors.white,
-                      ),
-                      contentPadding: const EdgeInsets.all(5),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        borderSide: BorderSide(
-                            width: 0.25, color: Theme.of(context).primaryColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        borderSide: BorderSide(
-                            width: 0.25, color: Theme.of(context).primaryColor),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
-                        ),
-                        borderSide: BorderSide(
-                            width: 0.25, color: Theme.of(context).primaryColor),
-                      ),
+                    contentPadding: const EdgeInsets.all(5),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Theme.of(context).primaryColor,
                     ),
+                    border: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                      borderSide: BorderSide(
+                          width: 0.25, color: Theme.of(context).primaryColor),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                      borderSide: BorderSide(
+                          width: 0.25, color: Theme.of(context).primaryColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                      borderSide: BorderSide(
+                          width: 0.25, color: Theme.of(context).primaryColor),
+                    ),
+                  ),
                   onSubmitted: (value) async {
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     Navigator.push(
@@ -105,7 +112,7 @@ class _SearchResultsState extends State<MovieSearchResults> {
           Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: SizedBox(
-              height: size.height * 0.35,
+              height: size.height * 0.375,
               child: SafeArea(
                 child: FutureBuilder<List<Movie>>(
                   future: searchMovies(widget.search),
@@ -156,11 +163,19 @@ class _SearchResultsState extends State<MovieSearchResults> {
                                         ),
                                       ),
                                     ),
+                                    Text(
+                                      (movie.type!).toUpperCase(),
+                                      style: TextStyle(
+                                        color: Theme.of(context).primaryColor,
+                                        fontSize: 10,
+                                      ),
+                                    ),
                                     Flexible(
                                       child: Text(
                                         movie.title,
                                         style: TextStyle(
-                                            color: Theme.of(context).primaryColor,
+                                            color:
+                                                Theme.of(context).primaryColor,
                                             fontSize: 13.5,
                                             overflow: TextOverflow.fade),
                                         softWrap: true,
@@ -173,11 +188,18 @@ class _SearchResultsState extends State<MovieSearchResults> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => MovieDetails(
-                                        id: movie.id,
-                                        title: movie.title,
-                                        releaseDate: movie.releaseDate!,
-                                      ),
+                                      builder: (context) => movie.type ==
+                                              'movie'
+                                          ? MovieDetails(
+                                              id: movie.id,
+                                              title: movie.title,
+                                              releaseDate: movie.releaseDate!,
+                                            )
+                                          : SeriesDetails(
+                                              id: movie.id,
+                                              name: movie.title,
+                                              poster: movie.thumb!,
+                                            ),
                                     ),
                                   );
                                 },

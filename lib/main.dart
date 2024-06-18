@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -12,6 +13,10 @@ import 'package:streamsavor/providers/anime_mode_provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+const DarwinInitializationSettings initializationSettingsDarwin =
+     DarwinInitializationSettings();
 
 void main() async {
   await Hive.initFlutter();
@@ -21,7 +26,8 @@ void main() async {
   await Hive.openBox<AnimeCards>('anime-fav');
   WidgetsFlutterBinding.ensureInitialized();
   const InitializationSettings initializationSettings = InitializationSettings(
-    android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
   );
 
   flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -54,7 +60,14 @@ void main() async {
   if (await Permission.videos.request().isDenied) {
     await Permission.storage.request();
   }
-  getExternalStorageDirectory();
+  if (Platform.isAndroid) {
+    getExternalStorageDirectory();
+  }
+  if (Platform.isIOS) {
+    var path = await getApplicationDocumentsDirectory();
+    await Directory(path.path).create(recursive: true); 
+    await Directory('${path.path}/Animes').create(recursive: true); 
+  }
 }
 
 class MyApp extends StatelessWidget {

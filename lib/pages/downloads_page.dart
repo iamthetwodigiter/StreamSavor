@@ -304,7 +304,8 @@ class _DownloadsPageState extends State<DownloadsPage> {
                                                                           MaterialPageRoute(
                                                                             builder: (context) =>
                                                                                 DefaultPlayer(
-                                                                              subUrl: vttFiles.elementAt(index).path,
+                                                                                  
+                                                                              subUrl: vttFiles.isNotEmpty ? vttFiles.elementAt(index).path : '',
                                                                               videoUrl: videoFiles.elementAt(index).path,
                                                                               name: videoFiles.elementAt(index).path.split('/').last,
                                                                             ),

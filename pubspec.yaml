@@ -2,7 +2,7 @@ name: streamsavor
 description: "A minimal movie and anime streaming app"
 publish_to: 'none'
 
-version: 3.6.0
+version: 4.0.0
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
@@ -29,6 +29,7 @@ dependencies:
   url_launcher: ^6.3.0
   permission_handler: ^11.3.1
   flutter_local_notifications: ^17.1.2
+  wakelock: ^0.6.2
 
 dev_dependencies:
   flutter_test:

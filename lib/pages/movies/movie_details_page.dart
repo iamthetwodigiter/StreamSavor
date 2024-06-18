@@ -120,7 +120,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                   children: [
                     FadeInDown(
                       child: Image(
-                        image: CachedNetworkImageProvider(snapshot.data!.cover !=
+                        image: CachedNetworkImageProvider(snapshot
+                                    .data!.cover !=
                                 'N/A'
                             ? snapshot.data!.cover
                             : 'https://www.gstatic.com/mobilesdk/180227_mobilesdk/storage_rules_zerostate.png'),
@@ -147,14 +148,20 @@ class _MovieDetailsState extends State<MovieDetails> {
                     FadeInRight(
                       child: Text(
                         snapshot.data!.description,
-                        style: TextStyle(color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175), fontSize: 12),
+                        style: TextStyle(
+                            color: darkMode
+                                ? Colors.white
+                                : Theme.of(context).primaryColor.withAlpha(175),
+                            fontSize: 12),
                       ),
                     ),
                     FadeInLeft(
                       child: RichText(
                         text: TextSpan(
                           style: TextStyle(
-                            color: darkMode ? const Color.fromARGB(255, 124, 124, 124) : Colors.grey[700],
+                            color: darkMode
+                                ? const Color.fromARGB(255, 124, 124, 124)
+                                : Colors.grey[700],
                             fontWeight: FontWeight.bold,
                           ),
                           children: [
@@ -164,7 +171,12 @@ class _MovieDetailsState extends State<MovieDetails> {
                             TextSpan(
                               text: snapshot.data!.releaseDate,
                               style: TextStyle(
-                                  color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175), fontSize: 12),
+                                  color: darkMode
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .primaryColor
+                                          .withAlpha(175),
+                                  fontSize: 12),
                             ),
                             const TextSpan(
                               text: '\nRatings:  ',
@@ -172,7 +184,12 @@ class _MovieDetailsState extends State<MovieDetails> {
                             TextSpan(
                               text: '${snapshot.data!.ratings} ⭐',
                               style: TextStyle(
-                                  color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175), fontSize: 12),
+                                  color: darkMode
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .primaryColor
+                                          .withAlpha(175),
+                                  fontSize: 12),
                             ),
                             const TextSpan(
                               text: '\nDuration:  ',
@@ -180,7 +197,12 @@ class _MovieDetailsState extends State<MovieDetails> {
                             TextSpan(
                               text: snapshot.data!.duration,
                               style: TextStyle(
-                                  color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175), fontSize: 12),
+                                  color: darkMode
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .primaryColor
+                                          .withAlpha(175),
+                                  fontSize: 12),
                             ),
                             const TextSpan(
                               text: '\nGenres:  ',
@@ -188,7 +210,11 @@ class _MovieDetailsState extends State<MovieDetails> {
                             TextSpan(
                               text: snapshot.data!.genres,
                               style: TextStyle(
-                                color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175),
+                                color: darkMode
+                                    ? Colors.white
+                                    : Theme.of(context)
+                                        .primaryColor
+                                        .withAlpha(175),
                                 fontSize: 12,
                               ),
                             ),
@@ -198,7 +224,11 @@ class _MovieDetailsState extends State<MovieDetails> {
                             TextSpan(
                               text: snapshot.data!.casts,
                               style: TextStyle(
-                                color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175),
+                                color: darkMode
+                                    ? Colors.white
+                                    : Theme.of(context)
+                                        .primaryColor
+                                        .withAlpha(175),
                                 fontSize: 12,
                               ),
                             ),
@@ -208,7 +238,11 @@ class _MovieDetailsState extends State<MovieDetails> {
                             TextSpan(
                               text: snapshot.data!.director,
                               style: TextStyle(
-                                color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175),
+                                color: darkMode
+                                    ? Colors.white
+                                    : Theme.of(context)
+                                        .primaryColor
+                                        .withAlpha(175),
                                 fontSize: 12,
                               ),
                             ),
@@ -218,7 +252,11 @@ class _MovieDetailsState extends State<MovieDetails> {
                             TextSpan(
                               text: snapshot.data!.writer,
                               style: TextStyle(
-                                color: darkMode ? Colors.white : Theme.of(context).primaryColor.withAlpha(175),
+                                color: darkMode
+                                    ? Colors.white
+                                    : Theme.of(context)
+                                        .primaryColor
+                                        .withAlpha(175),
                                 fontSize: 12,
                               ),
                             ),
@@ -229,103 +267,114 @@ class _MovieDetailsState extends State<MovieDetails> {
                     const SizedBox(height: 20),
                     FadeInDown(
                       child: ElevatedButton(
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            backgroundColor: darkMode ? Colors.black : Colors.grey[600],
-                            title:  Text(
-                              'Choose a Server',
-                              style: TextStyle(
-                                color: darkMode ? const Color.fromARGB(255, 124, 124, 124) : Colors.grey[850],
-                                fontSize: 20,
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor:
+                                  darkMode ? Colors.black : Colors.grey[600],
+                              title: Text(
+                                'Choose a Server',
+                                style: TextStyle(
+                                  color: darkMode
+                                      ? const Color.fromARGB(255, 124, 124, 124)
+                                      : Colors.grey[850],
+                                  fontSize: 20,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            contentTextStyle: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 18,
-                            ),
-                            content: SizedBox(
-                              width: 200,
-                              height: 150,
-                              child: FutureBuilder<ServerData>(
-                                future: listServers(snapshot.data!.id),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                      child: SizedBox(
-                                        height: 50,
-                                        width: 50,
-                                        child: CircularProgressIndicator(
-                                          color: Theme.of(context).primaryColor,
+                              contentTextStyle: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 18,
+                              ),
+                              content: SizedBox(
+                                width: 200,
+                                height: 150,
+                                child: FutureBuilder<ServerData>(
+                                  future: listServers(snapshot.data!.id),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: SizedBox(
+                                          height: 50,
+                                          width: 50,
+                                          child: CircularProgressIndicator(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Text(
-                                      // 'Error: ${snapshot.error}',
-                                      'Failed to load servers!!!',
-                                      style: TextStyle(
-                                        color: Theme.of(context).primaryColor,
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    );
-                                  } else {
-                                    final server = snapshot.data!;
-                                    return ListView.builder(
-                                      itemCount: server.links.length,
-                                      itemBuilder: (context, index) {
-                                        final link = server.links;
-                                        return Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                int x = server.stream!
-                                                    .lastIndexOf('/');
-                                                String url = server.stream!
-                                                        .substring(0, x + 1) +
-                                                    link.values.elementAt(index);
-                                                Navigator.of(context).pop();
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        DefaultPlayer(
-                                                      videoUrl: url,
-                                                      subUrl: server.subtitle,
-                                                      name: name,
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(
+                                        // 'Error: ${snapshot.error}',
+                                        'Failed to load servers!!!',
+                                        style: TextStyle(
+                                          color: Theme.of(context).primaryColor,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    } else {
+                                      final server = snapshot.data!;
+                                      return ListView.builder(
+                                        itemCount: server.links.length,
+                                        itemBuilder: (context, index) {
+                                          final link = server.links;
+                                          return Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  int x = server.stream!
+                                                      .lastIndexOf('/');
+                                                  String url = server.stream!
+                                                          .substring(0, x + 1) +
+                                                      link.values
+                                                          .elementAt(index);
+                                                  Navigator.of(context).pop();
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DefaultPlayer(
+                                                        videoUrl: url,
+                                                        subUrl: server.subtitle,
+                                                        name: name,
+                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                link.keys.elementAt(index),
+                                                  );
+                                                },
+                                                child: Text(
+                                                  link.keys.elementAt(index),
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
+                                              const SizedBox(height: 10),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  },
+                                ),
                               ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => {Navigator.pop(context)},
+                                  child: Text(
+                                    'Close',
+                                    style: TextStyle(
+                                        color: Theme.of(context).primaryColor),
+                                  ),
+                                ),
+                              ],
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => {Navigator.pop(context)},
-                                child: Text('Close', style: TextStyle(color: Theme.of(context).primaryColor),),
-                              ),
-                            ],
-                          ),
-                        ),
+                          );
+                        },
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(darkMode ? Colors.black : Colors.grey[400]),
+                          backgroundColor: MaterialStateProperty.all(
+                              darkMode ? Colors.black : Colors.grey[400]),
                           shadowColor: MaterialStateProperty.all(
                               Theme.of(context).primaryColor),
                           elevation: MaterialStateProperty.all(10),
@@ -367,12 +416,13 @@ class _MovieDetailsState extends State<MovieDetails> {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              backgroundColor: darkMode ? Colors.black : Colors.grey[600],
+                              backgroundColor:
+                                  darkMode ? Colors.black : Colors.grey[600],
                               duration: const Duration(milliseconds: 1500),
                             ),
                           );
                           final temp = await listServers(widget.id);
-          
+
                           final link = await listStreams(temp.stream!);
                           final downloadLink = temp.stream!.substring(
                                   0, temp.stream!.lastIndexOf('/') + 1) +
@@ -387,8 +437,8 @@ class _MovieDetailsState extends State<MovieDetails> {
                               context);
                         },
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(darkMode ? Colors.black : Colors.grey[400]),
+                          backgroundColor: MaterialStateProperty.all(
+                              darkMode ? Colors.black : Colors.grey[400]),
                           shadowColor: MaterialStateProperty.all(
                               Theme.of(context).primaryColor),
                           elevation: MaterialStateProperty.all(10),

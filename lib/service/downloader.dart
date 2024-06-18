@@ -47,14 +47,19 @@ Future<void> downloadFile(String url, String? anime, String name, String cover,
   url = animeMode ? url.replaceAll('master', 'index-f1-v1-a1') : url;
   Directory? appStorage = Directory('');
 
-  final status = await Permission.manageExternalStorage.request();
-  if (status.isGranted) {
-    appStorage = await getExternalStorageDirectory();
-  } else {
-    if (await Permission.storage.request().isGranted) {
+  if (Platform.isIOS) {
+    appStorage = await getApplicationDocumentsDirectory();
+  }
+  if (Platform.isAndroid) {
+    final status = await Permission.manageExternalStorage.request();
+    if (status.isGranted) {
       appStorage = await getExternalStorageDirectory();
     } else {
-      openAppSettings();
+      if (await Permission.storage.request().isGranted) {
+        appStorage = await getExternalStorageDirectory();
+      } else {
+        openAppSettings();
+      }
     }
   }
   if (animeMode) {
@@ -94,11 +99,9 @@ Future<void> downloadFile(String url, String? anime, String name, String cover,
                 true,
                 true);
           }
-        } 
+        }
       });
     });
-    //just a random code to remove the weird warning
-    timer!.isActive;
     final command =
         '-i ${playlistFile.path.replaceAll(name, 'video')} -c:v libx264 -profile:v baseline -c:a copy ${playlistFile.path}';
 

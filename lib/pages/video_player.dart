@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:streamsavor/providers/dark_mode_provider.dart';
 import 'package:subtitle_wrapper_package/subtitle_wrapper_package.dart';
+import 'package:wakelock/wakelock.dart';
 
 class DefaultPlayer extends StatefulWidget {
   final String subUrl;
@@ -44,7 +45,7 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
         subtitleType: SubtitleType.webvtt,
       );
     }
-    
+
     if (widget.videoUrl.contains('storage')) {
       _videoPlayerController = VideoPlayerController.file(
         File(widget.videoUrl),
@@ -63,12 +64,22 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
       videoPlayerController: _videoPlayerController,
       customVideoPlayerSettings: _customVideoPlayerSettings,
     );
+    _videoPlayerController.addListener(_onVideoPlayerControllerUpdate);
   }
 
   @override
   void dispose() {
     _customVideoPlayerController.dispose();
+    _videoPlayerController.removeListener(_onVideoPlayerControllerUpdate);
     super.dispose();
+  }
+
+  void _onVideoPlayerControllerUpdate() {
+    if (_videoPlayerController.value.isPlaying) {
+      Wakelock.enable();
+    } else {
+      Wakelock.disable();
+    }
   }
 
   @override
@@ -96,7 +107,6 @@ class _DefaultPlayerState extends State<DefaultPlayer> {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             SubtitleWrapper(
-              
               videoPlayerController: _videoPlayerController,
               subtitleController: subtitleController,
               subtitleStyle: const SubtitleStyle(

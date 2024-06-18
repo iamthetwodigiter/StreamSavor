@@ -103,3 +103,73 @@ class NewAdded {
     required this.releaseDate,
   });
 }
+
+class SeriesInfo {
+  final String id;
+  final String title;
+  final String cover;
+  final String description;
+  final String releaseDate;
+  final String duration;
+  final String genres;
+  final String casts;
+  final String director;
+  final String writer;
+  final String ratings;
+  final String? seasons;
+
+  SeriesInfo({
+    required this.id,
+    required this.title,
+    required this.cover,
+    required this.description,
+    required this.releaseDate,
+    required this.duration,
+    required this.genres,
+    required this.casts,
+    required this.director,
+    required this.writer,
+    required this.ratings,
+    required this.seasons,
+  });
+
+  factory SeriesInfo.fromJson(Map<String, dynamic> json) {
+    return SeriesInfo(
+        id: json['imdbID'],
+        title: json['Title'],
+        cover: json['Poster'],
+        description: json['Plot'],
+        releaseDate: json['Year'],
+        duration: json['Runtime'],
+        genres: json['Genre'],
+        casts: json['Actors'],
+        director: json['Director'],
+        writer: json['Writer'],
+        ratings: json['imdbRating'],
+        seasons: json['totalSeasons']);
+  }
+}
+
+// class EpisodeInfo {
+//   final String title;
+//   final String plot;
+//   final String runtime;
+//   final String poster;
+
+//   EpisodeInfo({
+//     required this.title,
+//     required this.plot,
+//     required this.runtime,
+//     required this.poster,
+//   });
+// }
+
+class SeriesLinks {
+  final String stream;
+  final String subtitle;
+
+  SeriesLinks({
+    required this.stream,
+    required this.subtitle,
+  });
+}
