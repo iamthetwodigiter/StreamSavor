@@ -29,6 +29,7 @@
   </br>
 `Update 4.0.0`
 * Added series support
+* apk files will be released once I get time
 
 ![GitHub All Releases](https://img.shields.io/github/downloads/iamthetwodigiter/StreamSavor/total?label=Downloads&logo=GitHub)
 
