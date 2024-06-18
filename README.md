@@ -26,6 +26,9 @@
 `Update 3.6.0`
 * Added notification support download progress
 * Few minor UI changes
+  </br>
+`Update 4.0.0`
+* Added series support
 
 ![GitHub All Releases](https://img.shields.io/github/downloads/iamthetwodigiter/StreamSavor/total?label=Downloads&logo=GitHub)
 
@@ -58,7 +61,7 @@
 
 * ~Subtitles Support~ `Added`
 * More streaming servers
-* Series Support
+* ~Series Support~ `Added`
 * ~Anime Support~ `Added`
 * ~Download Support~ `Added`
 * Login support to save userdata to cloud rather than local storage
